@@ -28,6 +28,7 @@ do
  echo
  echo "Enter in a name for Miner$i"
  echo "MAKE SURE YOU DO NOT ENTER IN THE SAME NAME TWICE"
+ echo "Usernames must be all lowercase and start with a lower case letter and contain no special characters/spaces"
 
  read name
  wget -q  https://steemd.com/@$name  
