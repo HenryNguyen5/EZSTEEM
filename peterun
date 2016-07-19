@@ -1,0 +1,54 @@
+#!/bin/bash
+
+#just concatenate a variable with newline characters
+StringToPass="seed-node = 212.117.213.186:2016\n"
+StringToPass+="seed-node = 185.82.203.92:2001\n"
+StringToPass+="seed-node = 52.74.152.79:2001\n"
+StringToPass+="seed-node = 52.63.172.229:2001\n"
+StringToPass+="seed-node = 104.236.82.250:2001\n"
+StringToPass+="seed-node = 104.199.157.70:2001\n"
+StringToPass+="seed-node = steem.kushed.com:2001\n"
+StringToPass+="seed-node = steemd.pharesim.me:2001\n"
+StringToPass+="seed-node = seed.steemnodes.com:2001\n"
+StringToPass+="seed-node = steemseed.dele-puppy.com:2001\n"
+StringToPass+="seed-node = seed.steemwitness.com:2001\n"
+StringToPass+="seed-node = seed.steemed.net:2001\n"
+StringToPass+="seed-node = steem-seed1.abit-more.com:2001\n"
+StringToPass+="seed-node = steem.clawmap.com:2001\n"
+StringToPass+="seed-node = 52.62.24.225:2001\n"
+StringToPass+="seed-node = steem-id.altexplorer.xyz:2001\n"
+StringToPass+="seed-node = 213.167.243.223:2001\n"
+StringToPass+="seed-node = 162.213.199.171:34191\n"
+StringToPass+="seed-node = 45.55.217.111:12150\n"
+StringToPass+="seed-node = 212.47.249.84:40696\n"
+StringToPass+="seed-node = 52.4.250.181:39705\n"
+StringToPass+="seed-node = 81.89.101.133:2001\n"
+StringToPass+="seed-node = 46.252.27.1:1337\n"
+
+#for this one, you just need to find the # seed-node = and put the string above on the next line.  (Since seed-node in the in file is already a comment)
+sed -i "s/# seed-node =/&\n$StringToPass/" peteconfig.ini
+
+#Note the quotes,  I used " to pass a variable, and ' for others
+
+sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' peteconfig.ini
+
+#for the arrays, I would use the while,do, done to build a string, then pass the string to the file using sed.
+
+#this is dummy data to test
+minerArr[1]="Ringo"
+minerArr[2]="Paul"
+minerArr[3]="George"
+minerArr[0]="John"
+
+StringToPass=""
+miner_count=${#minerArr[*]}
+index=0
+
+
+while [ "$index" -lt "$miner_count" ]
+do
+	StringToPass+="${minerArr[$index]}\n"
+	index=$[$index+1]
+done
+sed -i "s/# miner =/&\n$StringToPass/" peteconfig.ini
+
