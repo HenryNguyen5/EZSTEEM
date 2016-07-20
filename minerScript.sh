@@ -7,7 +7,7 @@ sudo apt-get -y install openssh-server
 sudo apt-get update 
 sudo apt-get -y upgrade 
 sudo apt-get -y install cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
-git clone https://github.com/steemit/steem && cd steem && git checkout master && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make 
+git clone https://github.com/steemit/steem && cd steem && git checkout master && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make  
 clear
 
 
@@ -66,6 +66,12 @@ do
  echo "Miner account names and their private key: ${minerArr[$i]}"
  i=$[$i+1]
 done
+
+cd ~/steem/programs/steemd
+./steemd &
+PID=$!
+sleep 5
+kill $PID
 
 echo "Modifying your ~/steem/programs/steemd/witness_node_data_dir/config.ini file"
 cd  ~/steem/programs/steemd/witness_node_data_dir/
