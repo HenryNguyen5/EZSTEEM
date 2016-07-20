@@ -1,13 +1,24 @@
 #!/bin/bash
+#made by steemit user omotherhen
+#This is a script for a first time setup of a miner, done in a VM for a fresh install of Ubuntu 16.04
+#base install for steem miner
+sudo apt-get -y install openssh-server 
+sudo apt-get update 
+sudo apt-get -y upgrade 
+sudo apt-get -y install git cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
+git clone https://github.com/steemit/steem && cd steem && git checkout master && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make
+clear
+
+
 #needed for vanitygen, creating private keys
-sudo apt-get -y install libpcre3-dev
-cd ~
-git clone https://github.com/samr7/vanitygen
-cd vanitygen && make
-ranStr=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 2 | head -n 1)
-echo "Generating private key for your miners..."
-privKey=$(./vanitygen "1$ranStr" | grep Privkey)
-formattedPrivKey=${privKey#* }
+sudo apt-get -y install libpcre3-dev 
+cd ~ 
+git clone https://github.com/samr7/vanitygen 
+cd vanitygen && make 
+ranStr=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 2 | head -n 1) 
+echo "Generating private key for your miners..." 
+privKey=$(./vanitygen "1$ranStr" | grep Privkey) 
+formattedPrivKey=${privKey#* } 
 clear
 
 cd ~
@@ -123,3 +134,10 @@ sed -i "s/# miner =/&\n$str/" config.ini
 #Replace "# mining-threads"
 #with contents of $mining_threads
 sed -i "s/# mining-threads =/$mining_threads/" config.ini
+
+echo "Boot-strapping blockchain for fast setup, then starting the miner!"
+cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
+
+#TODO
+#Setup automatic backup of blockchain for future compiling
+#Ask if first time miner, if not then do not add witnesses
