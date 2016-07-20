@@ -2,11 +2,12 @@
 #made by steemit user omotherhen
 #This is a script for a first time setup of a miner, done in a VM for a fresh install of Ubuntu 16.04
 #base install for steem miner
+cd ~
 sudo apt-get -y install openssh-server 
 sudo apt-get update 
 sudo apt-get -y upgrade 
-sudo apt-get -y install git cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
-git clone https://github.com/steemit/steem && cd steem && git checkout master && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make
+sudo apt-get -y install cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
+git clone https://github.com/steemit/steem && cd steem && git checkout master && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make 
 clear
 
 
