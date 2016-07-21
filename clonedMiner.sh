@@ -5,3 +5,5 @@ echo "Enter in how many threads you want to mine on this machine"
 read threads
 sed -i "s/mining-threads = [0-9]*/mining-threads = $threads/" config.ini
 sed -i 's/witness = /# witness =/' config.ini
+cd ..
+./steemd --replay
