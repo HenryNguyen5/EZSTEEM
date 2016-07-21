@@ -148,4 +148,3 @@ cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget ht
 
 #TODO
 #Setup automatic backup of blockchain for future compiling
-#Ask if first time miner, if not then do not add witnesses
