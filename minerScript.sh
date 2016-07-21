@@ -7,7 +7,7 @@ sudo apt-get -y install openssh-server
 sudo apt-get update 
 sudo apt-get -y upgrade 
 sudo apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
-git clone https://github.com/steemit/steem && cd steem && git checkout master && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make  
+git clone https://github.com/steemit/steem && cd steem && git checkout master && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make  -j 4
 clear
 
 
@@ -33,9 +33,10 @@ read cores
 mining_threads="mining-threads = $cores"
 
 
-echo "Creating four miner accounts..."
+echo "How many steem accounts would you like to make?"
+read acc
 i="0"
-while [ $i -lt 4 ]
+while [ $i -lt $acc ]
 do
  echo
  echo "Enter in a name for Miner$i"
@@ -59,7 +60,7 @@ done
 
 i="0"
 echo "Here are your witness + miner accounts and their corresponding WIF Key"
-while [ $i -lt 4 ]
+while [ $i -lt $acc ]
 do
  echo
  echo "Witnesses: ${witnessArr[$i]}"
@@ -70,7 +71,7 @@ done
 cd ~/steem/programs/steemd
 ./steemd &
 PID=$!
-sleep 5
+sleep 3
 kill $PID
 
 echo "Modifying your ~/steem/programs/steemd/witness_node_data_dir/config.ini file"
