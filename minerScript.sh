@@ -42,6 +42,7 @@ do
  echo "Enter in a name for Miner$i"
  echo "MAKE SURE YOU DO NOT ENTER IN THE SAME NAME TWICE"
  echo "Usernames must be all lowercase and start with a lower case letter and contain no special characters/spaces"
+ echo "In addition to above restrictions, usernames must be 3+ characters, can't start with a number, can use . and - to create segments but the segments have to be at least three letters and can't be more than 16 characters long"
 
  read name
  wget -q  https://steemd.com/@$name
