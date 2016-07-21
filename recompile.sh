@@ -6,4 +6,4 @@ cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make
 clear
 
 cd ~/steem/programs/steemd
-./steem
+./steemd
