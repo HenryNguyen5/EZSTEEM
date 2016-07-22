@@ -145,7 +145,7 @@ sed -i "s/# miner =/&\n$str/" config.ini
 sed -i "s/# mining-threads =/$mining_threads/" config.ini
 
 echo "Boot-strapping blockchain for fast setup, then starting the miner!"
-cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
+cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && rm -rf steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
 
 #TODO
 #Setup automatic backup of blockchain for future compiling
