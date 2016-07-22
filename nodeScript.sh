@@ -52,7 +52,7 @@ sed -i "s/# seed-node =/&\n$str/" config.ini
 sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' config.ini
 
 echo "Boot-strapping blockchain for fast setup, then starting the miner!"
-cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
+cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && rm -rf steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
 
 #TODO
 #Setup automatic backup of blockchain for future compiling
