@@ -12,7 +12,9 @@ red="\e[91m"
 e="echo -e"
 
 sudo cp ./onStart/EZSTEEM.service /etc/systemd/system
-sudo systemctl --enable EZSTEEM.service
+sudo systemctl enable EZSTEEM.service
+sudo chmod u+x ./EZSTEEM.sh
+
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------WELCOME TO EZSTEEM SUITE---------------------------------"
 $pnkl "---------------------------------------------------------------------------------------"

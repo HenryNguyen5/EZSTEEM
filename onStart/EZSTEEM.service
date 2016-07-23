@@ -3,8 +3,8 @@ Description=Main STEEM script startup
 After=network.target
 
 [Service]
-WorkingDirectory=~/
-ExecStart=~/firstTimeMiningInstall/EZSTEEM.sh
+WorkingDirectory="/home/$USER"
+ExecStart="/home/$USER/firstTimeMiningInstall/EZSTEEM.sh"
 Restart=always
 
 [Install]
