@@ -7,7 +7,7 @@ sudo apt-get -y install openssh-server
 sudo apt-get update 
 sudo apt-get -y upgrade 
 sudo apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
-git clone https://github.com/steemit/steem && cd steem && git checkout v0.12.0 && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make
+git clone https://github.com/steemit/steem && cd steem && git checkout v0.12.1 && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make
 clear
 
 
