@@ -1,0 +1,11 @@
+[Unit]
+Description=Main STEEM script startup
+After=network.target
+
+[Service]
+WorkingDirectory=~/
+ExecStart=~/firstTimeMiningInstall/EZSTEEM.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

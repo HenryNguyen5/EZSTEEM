@@ -11,6 +11,8 @@ wht="\e[97m"
 red="\e[91m"
 e="echo -e"
 
+sudo cp ./onStart/EZSTEEM.service /etc/systemd/system
+sudo systemctl --enable EZSTEEM.service
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------WELCOME TO EZSTEEM SUITE---------------------------------"
 $pnkl "---------------------------------------------------------------------------------------"
@@ -23,17 +25,20 @@ $e "$pnk 2) $wht (FOR CLONED MINRES ONLY!!) Configure your steem miner for the c
 $e "$pnk 3) $wht Do a full install for running a Steem Node"
 $e "$pnk 4) $wht Recompile your Steem miner or Steem Node with the latest version of Steem"
 $e "$pnk 5) $wht Redownload a blockchain and bootstrap your Steem Miner or Steem Node"
+$e "$pnk 6) $wht Start mining or start your node!"
+$e "$pnk 0) $wht Exit"
+
 echo
 
 choice=""
 while true 
 do
-  echo $choice | grep -q "^[0-5]"
+  echo $choice | grep -q "^[0-7]"
   if [ $? -eq 0 ] 
-   then 
+   then
    break
   fi
-  read -p "Enter your choice here: " choice 
+  read -p "Enter your choice here: " choice
 done
 
 
@@ -52,7 +57,12 @@ case $choice in
     bash ./bin/recompile.sh
   ;;
   5) echo "Blockchain redownload && bootstrap selected"
-    bash ./bin/refreshBlkChain
+    bash ./bin/refreshBlkChain.sh
+  ;;
+  6) cd ~/steem/programs/steemd
+      ./steemd
+  ;;
+  7)
   ;;
   0) echo "Exiting..."
      exit 0 
