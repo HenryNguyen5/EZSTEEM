@@ -28,7 +28,7 @@ echo
 choice=""
 while true 
 do
-  echo $choice | grep -q "^[1-5]"
+  echo $choice | grep -q "^[0-5]"
   if [ $? -eq 0 ] 
    then 
    break
@@ -36,17 +36,26 @@ do
   read -p "Enter your choice here: " choice 
 done
 
+
 case $choice in
 
   1) echo "Full install for mining Steem selected"
+    bash ./bin/minerScript.sh
   ;;
   2) echo "Cloned machine configuration selected"
+    bash ./bin/clonedMiner.sh
   ;;
   3) echo "Full install for running a Steem node selected"
+    bash ./bin/nodeScript.sh
   ;;
   4) echo "Steem recompile selected"
+    bash ./bin/recompile.sh
   ;;
   5) echo "Blockchain redownload && bootstrap selected"
+    bash ./bin/refreshBlkChain
   ;;
-  
+  0) echo "Exiting..."
+     exit 0 
+  ;;
   esac
+exit 0
