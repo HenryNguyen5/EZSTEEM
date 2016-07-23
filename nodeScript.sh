@@ -1,8 +1,49 @@
 #!/bin/bash
-#made by steemit user omotherhen
+#made by steemit users omotherhen and gikitiki
 #This is a script for a first time setup of a node, done in a VM for a fresh install of Ubuntu 16.04
 #base install for steem node
-cd ~
+
+#check if a configuration file exists for ezsteem and whether it can be modified
+myConfig="/etc/ezsteem.conf"
+
+if [ ! -e $myConfig ]; then
+   touch "$myConfig"
+fi
+if [ ! -w "$myConfig" ]; then
+   echo "Can not write to $myConfig"
+   echo "Please run script using : "
+   echo "sudo bash ${0}"
+   exit 1
+fi
+
+#source the config file
+. "$myConfig"
+
+#check if the default path is set
+if [ -z ${myBaseDir+x} ];
+then
+   echo "BaseDir is unset";
+   InstallDefault="/var/EZSTEEM"
+   read -p "Where would you like the Installation Directory? [$InstallDefault]: " myBaseDir
+   myBaseDir="${myBaseDir:-$InstallDefault}"
+   #update the config file
+   echo "myBaseDir=\"$myBaseDir\"" >> $myConfig
+fi
+
+#make the base directory if it doesn't exist
+mkdir -p "$myBaseDir"
+
+#be polite  ask if they want ezsteem added to the path
+while true; do
+   read -p "Would you like to be able to be able to run EZSTEEM from any directory? [y or N] : " myResponse
+   case "$myResponse" in
+      [Yy]* ) echo "export PATH=\"$myBaseDir/firstTimeMiningInstall:\$PATH\"" >> ~/.bashrc; break;;
+      [Nn]* ) break;;
+      * ) echo "Please answer y or n";;
+   esac
+done
+
+cd "$myBaseDir"
 sudo apt-get -y install openssh-server 
 sudo apt-get update 
 sudo apt-get -y upgrade 
@@ -10,14 +51,14 @@ sudo apt-get -y install unzip cmake g++ python-dev autotools-dev libicu-dev buil
 git clone https://github.com/steemit/steem && cd steem && git checkout v0.12.1 && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON . && make
 clear
 
-cd ~/steem/programs/steemd
+cd "$myBaseDir/steem/programs/steemd"
 ./steemd &
 PID=$!
 sleep 3
 kill $PID
 
-echo "Modifying your ~/steem/programs/steemd/witness_node_data_dir/config.ini file"
-cd  ~/steem/programs/steemd/witness_node_data_dir/
+echo "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
+cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
 
 #in config.ini replace "# seed-node = "
 
@@ -52,7 +93,7 @@ sed -i "s/# seed-node =/&\n$str/" config.ini
 sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' config.ini
 
 echo "Boot-strapping blockchain for fast setup, then starting the miner!"
-cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
 
 #TODO
 #Setup automatic backup of blockchain for future compiling
