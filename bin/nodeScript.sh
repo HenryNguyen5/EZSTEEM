@@ -43,7 +43,7 @@ while true; do
    esac
 done
 
-cd $myBaseDir
+cd "$myBaseDir"
 sudo apt-get -y install openssh-server 
 sudo apt-get update 
 sudo apt-get -y upgrade 
@@ -93,7 +93,7 @@ sed -i "s/# seed-node =/&\n$str/" config.ini
 sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' config.ini
 
 echo "Boot-strapping blockchain for fast setup, then starting the miner!"
-cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/i" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
 
 #TODO
 #Setup automatic backup of blockchain for future compiling
