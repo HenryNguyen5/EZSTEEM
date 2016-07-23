@@ -1,8 +1,43 @@
 #!/bin/bash
-#made by steemit user omotherhen
+#made by steemit user @omotherhen and @gikitiki
 #This is a script for a first time setup of a miner, done in a VM for a fresh install of Ubuntu 16.04
 #base install for steem miner
-cd ~
+
+#check if a configuration file exists for ezsteem and whether it can be modified
+myConfig="/etc/ezsteem.conf"
+
+if [ ! -e $myConfig ]; then
+   touch "$myConfig"
+fi
+if [ ! -w "$myConfig" ]; then
+   echo "Can not write to $myConfig"
+   echo "Please run script using : "
+   echo "sudo bash ${0}"
+   exit 1
+fi
+
+
+#source the config file
+. "$myConfig"
+
+
+#check if the default path is set
+if [ -z ${myBaseDir+x} ];
+then
+   echo "BaseDir is unset";
+   InstallDefault="/var/EZSTEEM"
+   read -p "Where would you like the Installation Directory? [$InstallDefault]: " myBaseDir
+   myBaseDir="${myBaseDir:-$InstallDefault}"
+   #update the config file
+   echo "myBaseDir=\"$myBaseDir\"" >> $myConfig
+fi
+
+#make the base directory if it doesn't exist
+mkdir -p "$myBaseDir"
+
+
+
+cd "$myBaseDir"
 sudo apt-get -y install openssh-server 
 sudo apt-get update 
 sudo apt-get -y upgrade 
@@ -13,7 +48,7 @@ clear
 
 #needed for vanitygen, creating private keys
 sudo apt-get -y install libpcre3-dev 
-cd ~ 
+cd "$myBaseDir" 
 git clone https://github.com/samr7/vanitygen 
 cd vanitygen && make 
 ranStr=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 2 | head -n 1) 
@@ -22,7 +57,7 @@ privKey=$(./vanitygen "1$ranStr" | grep Privkey)
 formattedPrivKey=${privKey#* } 
 clear
 
-cd ~
+cd "$myBaseDir"
 #arrays for storing valid miner names and their private keys
 declare -a minerArr
 declare -a witnessArr
@@ -39,12 +74,52 @@ i="0"
 while [ $i -lt $acc ]
 do
  echo
- echo "Enter in a name for Miner$i"
+ echo "Enter in a name for Miner $i"
  echo "MAKE SURE YOU DO NOT ENTER IN THE SAME NAME TWICE"
  echo "Usernames must be all lowercase and start with a lower case letter and contain no special characters/spaces"
  echo "In addition to above restrictions, usernames must be 3+ characters, can't start with a number, can use . and - to create segments but the segments have to be at least three letters and can't be more than 16 characters long"
 
- read name
+#the user will specify a name for the miner.  Check it meets criteria
+while true;
+do
+   myTest="PASS"
+   read -p "Enter in a name for Miner $i : " name
+   if grep -q "^[a-z][-a-z0-9.]\{2,14\}[a-z0-9]$" <<< "$name" ;
+      then
+         #If the name contains a . The segment has to be three alphanum characters
+         if ! grep -q "^[a-z][a-z0-9]\{2,2\}" <<< "$name" ;
+         then
+            echo "The first character is a letter, the next two must be alphanum"
+            myTest="FAIL"
+         fi
+         #If the name contains a . The segment has to be three alphanum characters
+         if grep -q "[.]" <<< "$name" ;
+         then
+            if ! grep -q "[.][a-z0-9]\{3,14\}" <<< "$name" ;
+            then
+               echo "You must have at least 3 alphanum characters after a period"
+               myTest="FAIL"
+            fi
+         fi
+         #If the name contains a - The segment has to be three alphanum characters
+         if grep -q "[-]" <<< "$name" ;
+         then
+            if ! grep -q "[-][a-z0-9]\{3,14\}" <<< "$name" ;
+            then
+               echo "You must have at least 3 alphanum characters after a dash"
+               myTest="FAIL"
+            fi
+         fi
+   else
+      echo "TRY AGAIN: Please check the naming rules."
+      myTest="FAIL"
+   fi
+   if [ $myTest == "PASS" ] ;
+   then
+      break;
+   fi
+done
+ 
  wget -q  https://steemd.com/@$name
  wgetStatus=$?
  rm -f @*
@@ -55,7 +130,7 @@ do
   witnessArr[$i]="witness = \"$name\""
   i=$[$i+1]
  else
-  echo "Name taken or invalid, try another name"
+  echo "Name : $name is taken or invalid, try another name"
  fi
 done
 
@@ -69,14 +144,14 @@ do
  i=$[$i+1]
 done
 
-cd ~/steem/programs/steemd
+cd "$myBaseDir/steem/programs/steemd"
 ./steemd &
 PID=$!
 sleep 3
 kill $PID
 
 echo "Modifying your ~/steem/programs/steemd/witness_node_data_dir/config.ini file"
-cd  ~/steem/programs/steemd/witness_node_data_dir/
+cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
 
 #TODO
 #in config.ini replace "# seed-node = "
@@ -145,7 +220,7 @@ sed -i "s/# miner =/&\n$str/" config.ini
 sed -i "s/# mining-threads =/$mining_threads/" config.ini
 
 echo "Boot-strapping blockchain for fast setup, then starting the miner!"
-cd ~/steem/programs/steemd/witness_node_data_dir/blockchain/database/ && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
 
 #TODO
 #Setup automatic backup of blockchain for future compiling
