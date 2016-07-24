@@ -103,7 +103,7 @@ while true;
 do
    myTest="PASS"
    read -p "Enter in a name for Miner $i : " name
-   if grep -q "^[a-z][-a-z0-9.]\{2,14\}[a-z0-9]$" <<< "$name" ;
+   if grep -q "^[a-z][-a-z0-9.]\{1,14\}[a-z0-9]$" <<< "$name" ;
       then
          #If the name contains a . The segment has to be three alphanum characters
          if ! grep -q "^[a-z][a-z0-9]\{2,2\}" <<< "$name" ;
