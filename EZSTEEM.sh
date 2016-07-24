@@ -13,6 +13,8 @@ fi
 . "$myConfig"
 
 
+
+
 clear
 
 pnkl="echo -e \e[95m"
@@ -24,6 +26,9 @@ wht="\e[97m"
 red="\e[91m"
 e="echo -e"
 
+#sudo cp ./onStart/EZSTEEM.service /etc/systemd/system
+#sudo systemctl enable EZSTEEM.service
+#sudo chmod u+x ./EZSTEEM.sh
 
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------WELCOME TO EZSTEEM SUITE---------------------------------"
@@ -38,6 +43,7 @@ $e "$pnk 3) $wht Do a full install for running a Steem Node"
 $e "$pnk 4) $wht Recompile your Steem miner or Steem Node with the latest version of Steem"
 $e "$pnk 5) $wht Redownload a blockchain and bootstrap your Steem Miner or Steem Node"
 $e "$pnk 6) $wht Start mining or start your node!"
+$e "$pnk 7) $wht Set EZSTEEM to automatically run when user logs in."
 $e "$pnk 0) $wht Exit"
 
 echo
@@ -46,7 +52,7 @@ choice=""
 while true 
 do
   read -p "Enter your choice here: " choice
-  echo $choice | grep -q "^[0-6]"
+  echo $choice | grep -q "^[0-7]"
   if [ $? -eq 0 ] 
    then
    break
@@ -57,22 +63,25 @@ done
 case $choice in
 
   1) echo "Full install for mining Steem selected"
-    bash ./bin/minerScript.sh
+    bash  $myBaseDir/firstTimeMiningInstall/bin/minerScript.sh
   ;;
   2) echo "Cloned machine configuration selected"
-    bash ./bin/clonedMiner.sh
+    bash $myBaseDir/firstTimeMiningInstall/bin/clonedMiner.sh
   ;;
   3) echo "Full install for running a Steem node selected"
-    bash ./bin/nodeScript.sh
+    bash $myBaseDir/firstTimeMiningInstall/bin/nodeScript.sh
   ;;
   4) echo "Steem recompile selected"
-    bash ./bin/recompile.sh
+    bash $myBaseDir/firstTimeMiningInstall/bin/recompile.sh
   ;;
   5) echo "Blockchain redownload && bootstrap selected"
-    bash ./bin/refreshBlkChain.sh
+    bash $myBaseDir/firstTimeMiningInstall/bin/refreshBlkChain.sh
   ;;
   6) cd "$myBaseDir/steem/programs/steemd"
-      ./steemd
+      $myBaseDir/firstTimeMiningInstall/steemd
+  ;;
+  7) echo "Enabling EZSTEEM AutoRun"
+    bash $myBaseDir/firstTimeMiningInstall/bin/setautorun.sh
   ;;
   0) echo "Exiting..."
      exit 0 
