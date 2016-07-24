@@ -81,7 +81,7 @@ case $choice in
       sudo -s $myBaseDir/firstTimeMiningInstall/steemd
   ;;
   7) echo "Enabling EZSTEEM AutoRun"
-    bash $myBaseDir/firstTimeMiningInstall/bin/setautorun.sh
+    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/setautorun.sh
   ;;
   0) echo "Exiting..."
      exit 0 
