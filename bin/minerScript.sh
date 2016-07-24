@@ -50,7 +50,7 @@ fi
 #make the base directory if it doesn't exist
 mkdir -p "$myBaseDir"
 
-
+myConfigFile=$myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini
 
 cd "$myBaseDir"
 sudo apt-get -y install openssh-server 
@@ -170,7 +170,7 @@ kill $PID
 sleep 1
 
 echo
-$pnkl "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
+$pnkl "Modifying your $myConfigFile file"
 $whtl
 
 cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
@@ -201,12 +201,12 @@ str+="seed-node = 52.4.250.181:39705\n"
 str+="seed-node = 81.89.101.133:2001\n"
 str+="seed-node = 46.252.27.1:1337\n"
 
-sed -i "s/# seed-node =/&\n$str/" config.ini
+sed -i "s/# seed-node =/&\n$str/" "$myConfigFile"
 
 
 #Replace "# rpc-endpoint = "
 #with    "rpc-endpoint = 127.0.0.1:8090"
-sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' config.ini
+sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' "$myConfigFile"
 
 
 #Replace "# witness = "
@@ -219,7 +219,7 @@ do
 	str+="${witnessArr[$index]}\n"
 	index=$[$index+1]
 done
-sed -i "s/# witness =/&\n$str/" config.ini
+sed -i "s/# witness =/&\n$str/" "$myConfigFile"
 
 
 #Replace "#  miner = "
@@ -233,12 +233,12 @@ do
 	str+="${minerArr[$index]}\n"
 	index=$[$index+1]
 done
-sed -i "s/# miner =/&\n$str/" config.ini
+sed -i "s/# miner =/&\n$str/" "$myConfigFile"
 
 
 #Replace "# mining-threads"
 #with contents of $mining_threads
-sed -i "s/# mining-threads =/$mining_threads/" config.ini
+sed -i "s/# mining-threads =/$mining_threads/" "$myConfigFile"
 
 $e "$pnk Boot-strapping blockchain for fast setup, then starting the miner! $wht"
 cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && rm -f steem-blocks-and-index.zip && cd ../../../ 
@@ -247,6 +247,7 @@ $pnkl "-------------------------------------------------------------------------
 $pnkl "------------------------------------Starting Miner-------------------------------------"
 $pnkl "---------------------------------------------------------------------------------------"
 $whtl
+cd "$myBaseDir/steem/programs/steemd"
 ./steemd --replay
 
 #TODO

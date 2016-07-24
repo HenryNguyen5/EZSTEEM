@@ -63,22 +63,22 @@ done
 case $choice in
 
   1) echo "Full install for mining Steem selected"
-    bash  $myBaseDir/firstTimeMiningInstall/bin/minerScript.sh
+    sudo -s bash  $myBaseDir/firstTimeMiningInstall/bin/minerScript.sh
   ;;
   2) echo "Cloned machine configuration selected"
-    bash $myBaseDir/firstTimeMiningInstall/bin/clonedMiner.sh
+    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/clonedMiner.sh
   ;;
   3) echo "Full install for running a Steem node selected"
-    bash $myBaseDir/firstTimeMiningInstall/bin/nodeScript.sh
+    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/nodeScript.sh
   ;;
   4) echo "Steem recompile selected"
-    bash $myBaseDir/firstTimeMiningInstall/bin/recompile.sh
+    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/recompile.sh
   ;;
   5) echo "Blockchain redownload && bootstrap selected"
-    bash $myBaseDir/firstTimeMiningInstall/bin/refreshBlkChain.sh
+    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/refreshBlkChain.sh
   ;;
   6) cd "$myBaseDir/steem/programs/steemd"
-      $myBaseDir/firstTimeMiningInstall/steemd
+      sudo -s $myBaseDir/firstTimeMiningInstall/steemd
   ;;
   7) echo "Enabling EZSTEEM AutoRun"
     bash $myBaseDir/firstTimeMiningInstall/bin/setautorun.sh
