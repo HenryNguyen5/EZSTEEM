@@ -79,24 +79,23 @@ declare -a witnessArr
 
 
 $pnkl "How many threads do you want to mine on?"
-echo
-$whtl"	This is the number of CPU cores you have."
-echo "	If you have hyperthreading on, then it is double the amount of cores"
+$whtl"  This is the number of CPU cores you have."
+echo "  If you have hyperthreading on, then it is double the amount of cores"
 read cores
 mining_threads="mining-threads = $cores"
 
 echo
-$pnk1 "How many steem accounts would you like to make? $wht"
+$e "$pnk How many steem accounts would you like to make? $wht"
 read acc
 i="0"
 while [ $i -lt $acc ]
 do
  echo
  $pnkl "Enter in a name for Miner $i "
- echo -e "$wht	MAKE SURE YOU DO NOT ENTER IN THE SAME NAME TWICE"
- echo "	Usernames must be all lowercase and start with a lower case letter and contain no special characters/spaces"
- echo "	In addition to above restrictions, usernames must be 3+ characters, can't start with a number"
- echo "	. and - to create segments greater than two letters and less than 16 characters is allowed"
+ $e "$wht	MAKE SURE YOU DO NOT ENTER IN THE SAME NAME TWICE"
+ echo " Usernames must be all lowercase and start with a lower case letter and contain no special characters/spaces"
+ echo " In addition to above restrictions, usernames must be 3+ characters, can't start with a number"
+ echo " . and - to create segments greater than two letters and less than 16 characters is allowed"
  $pnkl
 #the user will specify a name for the miner.  Check it meets criteria
 while true;
@@ -144,7 +143,7 @@ done
  rm -f @*
  if [ $wgetStatus -gt 0 ]
   then
-  $pnkl "Name available! Miner account $i is: $name"
+  $whtl "Name available! Miner account $i is: $name"
   minerArr[$i]="miner = [\"$name\",\"$formattedPrivKey\"]"
   witnessArr[$i]="witness = \"$name\""
   i=$[$i+1]
@@ -158,9 +157,8 @@ echo
 $pnkl "Here are your witness + miner accounts and their corresponding WIF Key"
 while [ $i -lt $acc ]
 do
- $whtl
- echo "	Witnesses: ${witnessArr[$i]}"
- echo "	Miner account names and their private key: ${minerArr[$i]}"
+ $e "$pnk Witnesses: $wht ${witnessArr[$i]}"
+ $e "$pnk Miner account names and their private key: $wht ${minerArr[$i]}"
  i=$[$i+1]
 done
 
