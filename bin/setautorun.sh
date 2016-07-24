@@ -5,7 +5,13 @@
 myConfig="/etc/ezsteem.conf"
 
 if [ ! -e $myConfig ]; then
-   myBaseDir="/var/EZSTEEM"
+   touch "$myConfig"
+   if [ ! -w "$myConfig" ]; then
+      echo "Can not write to $myConfig"
+      echo "Please run script using : "
+      echo "sudo bash ${0}"
+      exit 1
+   fi
 fi
 
 #source the config file

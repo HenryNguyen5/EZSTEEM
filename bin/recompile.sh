@@ -18,12 +18,12 @@ myConfig="/etc/ezsteem.conf"
 
 if [ ! -e $myConfig ]; then
    touch "$myConfig"
-fi
-if [ ! -w "$myConfig" ]; then
-   echo "Can not write to $myConfig"
-   echo "Please run script using : "
-   echo "sudo bash ${0}"
-   exit 1
+   if [ ! -w "$myConfig" ]; then
+      echo "Can not write to $myConfig"
+      echo "Please run script using : "
+      echo "sudo bash ${0}"
+      exit 1
+   fi
 fi
 
 $pnkl "---------------------------------------------------------------------------------------"
