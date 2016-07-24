@@ -13,8 +13,6 @@ fi
 . "$myConfig"
 
 
-
-
 clear
 
 pnkl="echo -e \e[95m"
@@ -26,9 +24,6 @@ wht="\e[97m"
 red="\e[91m"
 e="echo -e"
 
-#sudo cp ./onStart/EZSTEEM.service /etc/systemd/system
-#sudo systemctl enable EZSTEEM.service
-#sudo chmod u+x ./EZSTEEM.sh
 
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------WELCOME TO EZSTEEM SUITE---------------------------------"
@@ -51,7 +46,7 @@ choice=""
 while true 
 do
   read -p "Enter your choice here: " choice
-  echo $choice | grep -q "^[0-7]"
+  echo $choice | grep -q "^[0-6]"
   if [ $? -eq 0 ] 
    then
    break
@@ -78,8 +73,6 @@ case $choice in
   ;;
   6) cd "$myBaseDir/steem/programs/steemd"
       ./steemd
-  ;;
-  7)
   ;;
   0) echo "Exiting..."
      exit 0 
