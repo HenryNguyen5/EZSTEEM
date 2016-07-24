@@ -73,10 +73,10 @@ cd "$myBaseDir/steem/programs/steemd"
 PID=$!
 sleep 3
 kill $PID
+sleep 1
 clear
 
-$pnkl "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
-$whtl
+$e "$pnk Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file $wht"
 cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
 
 #in config.ini replace "# seed-node = "

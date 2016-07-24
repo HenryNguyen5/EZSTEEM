@@ -167,6 +167,7 @@ cd "$myBaseDir/steem/programs/steemd"
 PID=$!
 sleep 3
 kill $PID
+sleep 1
 
 echo
 $pnkl "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
@@ -239,8 +240,7 @@ sed -i "s/# miner =/&\n$str/" config.ini
 #with contents of $mining_threads
 sed -i "s/# mining-threads =/$mining_threads/" config.ini
 
-$pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
-$whtl
+$e "$pnk Boot-strapping blockchain for fast setup, then starting the miner! $wht"
 cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && rm -f steem-blocks-and-index.zip && cd ../../../ 
 
 $pnkl "---------------------------------------------------------------------------------------"
