@@ -75,7 +75,7 @@ case $choice in
     sudo -s bash $myBaseDir/bin/refreshBlkChain.sh
   ;;
   6) cd "$myBaseDir/steem/programs/steemd"
-      sudo -s $myBaseDir/steemd
+      sudo -s ./steemd
   ;;
   7) echo "Enabling EZSTEEM AutoRun"
     sudo -s bash $myBaseDir/bin/setautorun.sh
