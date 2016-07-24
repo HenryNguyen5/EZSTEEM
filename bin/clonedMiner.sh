@@ -1,6 +1,22 @@
 #!/bin/bash
 #made by steemit users @omotherhen and @gikitiki
 
+clear
+
+pnkl="echo -e \e[95m"
+whtl="echo -e \e[97m"
+redl="echo -e \e[91m"
+
+pnk="\e[95m"
+wht="\e[97m"
+red="\e[91m"
+e="echo -e"
+
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "------------------------------WELCOME TO EZSTEEM CLONE---------------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+$whtl
+
 #check if a configuration file exists for ezsteem and whether it can be modified
 myConfig="/etc/ezsteem.conf"
 
@@ -32,12 +48,16 @@ fi
 mkdir -p "$myBaseDir"
 
 
-
+echo
 #Modifies config files for when user has n-2 miners to setup
 cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir"
-echo "Enter in how many threads you want to mine on this machine"
+$pnkl "Enter in how many threads you want to mine on this machine $wht"
 read threads
 sed -i "s/mining-threads = [0-9]*/mining-threads = $threads/" config.ini
 sed -i 's/witness = /# witness =/' config.ini
 cd ..
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "------------------------------------Starting Miner-------------------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+$whtl
 ./steemd --replay
