@@ -243,7 +243,7 @@ sed -i "s/# mining-threads =/$mining_threads/" config.ini
 
 $pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
 $whtl
-cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ 
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && rm -f steem-blocks-and-index.zip && cd ../../../ 
 
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------------Starting Miner-------------------------------------"
