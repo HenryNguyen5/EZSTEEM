@@ -1,6 +1,18 @@
 #!/bin/bash
 #made by steemit users @omotherhen and @gikitiki
 
+clear
+
+pnkl="echo -e \e[95m"
+whtl="echo -e \e[97m"
+redl="echo -e \e[91m"
+
+pnk="\e[95m"
+wht="\e[97m"
+red="\e[91m"
+e="echo -e"
+
+
 #check if a configuration file exists for ezsteem and whether it can be modified
 myConfig="/etc/ezsteem.conf"
 
@@ -13,6 +25,11 @@ if [ ! -w "$myConfig" ]; then
    echo "sudo bash ${0}"
    exit 1
 fi
+
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "----------------------------WELCOME TO EZSTEEM RECOMPILE-------------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+$whtl
 
 #source the config file
 . "$myConfig"
