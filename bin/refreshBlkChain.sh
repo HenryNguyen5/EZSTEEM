@@ -51,6 +51,7 @@ mkdir -p "$myBaseDir"
 $pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
 $whtl
 cd "myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && rm -f *.zip && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip
+rm -f steem-blocks-and-index.zip
 
 clear
 $pnkl "---------------------------------------------------------------------------------------"
