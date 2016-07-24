@@ -1,6 +1,22 @@
 #!/bin/bash
 #made by steemit users @omotherhen and @gikitiki
 
+clear
+
+pnkl="echo -e \e[95m"
+whtl="echo -e \e[97m"
+redl="echo -e \e[91m"
+
+pnk="\e[95m"
+wht="\e[97m"
+red="\e[91m"
+e="echo -e"
+
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "------------------------WELCOME TO EZSTEEM BLOCKCHAIN RESYNC---------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+$whtl
+
 #check if a configuration file exists for ezsteem and whether it can be modified
 myConfig="/etc/ezsteem.conf"
 
@@ -32,11 +48,8 @@ fi
 mkdir -p "$myBaseDir"
 
 
-
-
-
-
-
-echo "Boot-strapping blockchain for fast setup, then starting the miner!"
+$pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
+$whtl
 cd "myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && rm -f *.zip && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip 
-
+clear
+$pnkl "-----------------------------------------Done!-----------------------------------------"
