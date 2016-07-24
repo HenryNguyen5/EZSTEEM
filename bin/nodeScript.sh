@@ -3,6 +3,17 @@
 #This is a script for a first time setup of a node, done in a VM for a fresh install of Ubuntu 16.04
 #base install for steem node
 
+clear
+
+pnkl="echo -e \e[95m"
+whtl="echo -e \e[97m"
+redl="echo -e \e[91m"
+
+pnk="\e[95m"
+wht="\e[97m"
+red="\e[91m"
+e="echo -e"
+
 #check if a configuration file exists for ezsteem and whether it can be modified
 myConfig="/etc/ezsteem.conf"
 
@@ -18,6 +29,12 @@ fi
 
 #source the config file
 . "$myConfig"
+
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "----------------------------WELCOME TO EZSTEEM NODE SETUP------------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+$whtl
+echo
 
 #check if the default path is set
 if [ -z ${myBaseDir+x} ];
@@ -56,8 +73,10 @@ cd "$myBaseDir/steem/programs/steemd"
 PID=$!
 sleep 3
 kill $PID
+clear
 
-echo "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
+$pnkl "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
+$whtl
 cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
 
 #in config.ini replace "# seed-node = "
@@ -92,7 +111,8 @@ sed -i "s/# seed-node =/&\n$str/" config.ini
 #with    "rpc-endpoint = 127.0.0.1:8090"
 sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' config.ini
 
-echo "Boot-strapping blockchain for fast setup, then starting the miner!"
+$pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
+$whtl
 cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
 
 #TODO
