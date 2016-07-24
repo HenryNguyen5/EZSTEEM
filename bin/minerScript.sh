@@ -3,6 +3,16 @@
 #This is a script for a first time setup of a miner, done in a VM for a fresh install of Ubuntu 16.04
 #base install for steem miner
 
+pnkl="echo -e \e[95m"
+whtl="echo -e \e[97m"
+redl="echo -e \e[91m"
+
+pnk="\e[95m"
+wht="\e[97m"
+red="\e[91m"
+e="echo -e"
+
+
 #check if a configuration file exists for ezsteem and whether it can be modified
 myConfig="/etc/ezsteem.conf"
 
@@ -62,23 +72,30 @@ cd "$myBaseDir"
 declare -a minerArr
 declare -a witnessArr
 
-echo "How many threads do you want to mine on?"
-echo "This is the number of CPU cores you have, unless you have hyperthreading on, then it is double the amount of cores"
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "------------------------------WELCOME TO EZSTEEM MINER---------------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+
+$pnkl "How many threads do you want to mine on?"
+echo
+$whtl"	This is the number of CPU cores you have."
+echo "	If you have hyperthreading on, then it is double the amount of cores"
 read cores
 mining_threads="mining-threads = $cores"
 
-
-echo "How many steem accounts would you like to make?"
+echo
+$pnk1 "How many steem accounts would you like to make? $wht"
 read acc
 i="0"
 while [ $i -lt $acc ]
 do
  echo
- echo "Enter in a name for Miner $i"
- echo "MAKE SURE YOU DO NOT ENTER IN THE SAME NAME TWICE"
- echo "Usernames must be all lowercase and start with a lower case letter and contain no special characters/spaces"
- echo "In addition to above restrictions, usernames must be 3+ characters, can't start with a number, can use . and - to create segments but the segments have to be at least three letters and can't be more than 16 characters long"
-
+ $pnkl "Enter in a name for Miner $i "
+ echo -e "$wht	MAKE SURE YOU DO NOT ENTER IN THE SAME NAME TWICE"
+ echo "	Usernames must be all lowercase and start with a lower case letter and contain no special characters/spaces"
+ echo "	In addition to above restrictions, usernames must be 3+ characters, can't start with a number"
+ echo "	. and - to create segments greater than two letters and less than 16 characters is allowed"
+ $pnkl
 #the user will specify a name for the miner.  Check it meets criteria
 while true;
 do
@@ -89,7 +106,7 @@ do
          #If the name contains a . The segment has to be three alphanum characters
          if ! grep -q "^[a-z][a-z0-9]\{2,2\}" <<< "$name" ;
          then
-            echo "The first character is a letter, the next two must be alphanum"
+            $whtl "The first character is a letter, the next two must be alphanum"
             myTest="FAIL"
          fi
          #If the name contains a . The segment has to be three alphanum characters
@@ -97,7 +114,7 @@ do
          then
             if ! grep -q "[.][a-z0-9]\{3,14\}" <<< "$name" ;
             then
-               echo "You must have at least 3 alphanum characters after a period"
+               $whtl "You must have at least 3 alphanum characters after a period"
                myTest="FAIL"
             fi
          fi
@@ -106,12 +123,12 @@ do
          then
             if ! grep -q "[-][a-z0-9]\{3,14\}" <<< "$name" ;
             then
-               echo "You must have at least 3 alphanum characters after a dash"
+                $whtl "You must have at least 3 alphanum characters after a dash"
                myTest="FAIL"
             fi
          fi
    else
-      echo "TRY AGAIN: Please check the naming rules."
+       $whtl "TRY AGAIN: Please check the naming rules."
       myTest="FAIL"
    fi
    if [ $myTest == "PASS" ] ;
@@ -125,22 +142,23 @@ done
  rm -f @*
  if [ $wgetStatus -gt 0 ]
   then
-  echo "Name available! Miner account $i is: $name"
+  $pnkl "Name available! Miner account $i is: $name"
   minerArr[$i]="miner = [\"$name\",\"$formattedPrivKey\"]"
   witnessArr[$i]="witness = \"$name\""
   i=$[$i+1]
  else
-  echo "Name : $name is taken or invalid, try another name"
+  $whtl "Name : $name is taken, try another name"
  fi
 done
 
 i="0"
-echo "Here are your witness + miner accounts and their corresponding WIF Key"
+echo
+$pnkl "Here are your witness + miner accounts and their corresponding WIF Key"
 while [ $i -lt $acc ]
 do
- echo
- echo "Witnesses: ${witnessArr[$i]}"
- echo "Miner account names and their private key: ${minerArr[$i]}"
+ $whtl
+ echo "	Witnesses: ${witnessArr[$i]}"
+ echo "	Miner account names and their private key: ${minerArr[$i]}"
  i=$[$i+1]
 done
 
@@ -150,10 +168,12 @@ PID=$!
 sleep 3
 kill $PID
 
-echo "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
+echo
+$pnkl "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
+$whtl
+
 cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
 
-#TODO
 #in config.ini replace "# seed-node = "
 
 str="seed-node = 212.117.213.186:2016\n"
@@ -219,7 +239,8 @@ sed -i "s/# miner =/&\n$str/" config.ini
 #with contents of $mining_threads
 sed -i "s/# mining-threads =/$mining_threads/" config.ini
 
-echo "Boot-strapping blockchain for fast setup, then starting the miner!"
+$pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
+$whtl
 cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
 
 #TODO
