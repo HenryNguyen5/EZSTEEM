@@ -57,6 +57,6 @@ make -s clean > /dev/null
 cmake -DCMAKE_BUILD_TYPE=Release-DLOW_MEMORY_NODE=ON .
 make --silent 
 clear
-echo -e "\e[5mDone!\e[25m"
+$pnkl "-----------------------------------------Done!-----------------------------------------"
 exit 0
 
