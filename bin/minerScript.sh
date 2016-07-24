@@ -2,6 +2,7 @@
 #made by steemit user @omotherhen and @gikitiki
 #This is a script for a first time setup of a miner, done in a VM for a fresh install of Ubuntu 16.04
 #base install for steem miner
+clear
 
 pnkl="echo -e \e[95m"
 whtl="echo -e \e[97m"
@@ -30,6 +31,10 @@ fi
 #source the config file
 . "$myConfig"
 
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "------------------------------WELCOME TO EZSTEEM MINER---------------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+$whtl
 
 #check if the default path is set
 if [ -z ${myBaseDir+x} ];
@@ -72,9 +77,6 @@ cd "$myBaseDir"
 declare -a minerArr
 declare -a witnessArr
 
-$pnkl "---------------------------------------------------------------------------------------"
-$pnkl "------------------------------WELCOME TO EZSTEEM MINER---------------------------------"
-$pnkl "---------------------------------------------------------------------------------------"
 
 $pnkl "How many threads do you want to mine on?"
 echo
