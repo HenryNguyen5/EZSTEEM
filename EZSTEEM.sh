@@ -26,9 +26,6 @@ wht="\e[97m"
 red="\e[91m"
 e="echo -e"
 
-#sudo cp ./onStart/EZSTEEM.service /etc/systemd/system
-#sudo systemctl enable EZSTEEM.service
-#sudo chmod u+x ./EZSTEEM.sh
 
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------WELCOME TO EZSTEEM SUITE---------------------------------"
@@ -63,25 +60,25 @@ done
 case $choice in
 
   1) echo "Full install for mining Steem selected"
-    sudo -s bash  $myBaseDir/firstTimeMiningInstall/bin/minerScript.sh
+    sudo -s bash  $myBaseDir/bin/minerScript.sh
   ;;
   2) echo "Cloned machine configuration selected"
-    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/clonedMiner.sh
+    sudo -s bash $myBaseDir/bin/clonedMiner.sh
   ;;
   3) echo "Full install for running a Steem node selected"
-    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/nodeScript.sh
+    sudo -s bash $myBaseDir/bin/nodeScript.sh
   ;;
   4) echo "Steem recompile selected"
-    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/recompile.sh
+    sudo -s bash $myBaseDir/bin/recompile.sh
   ;;
   5) echo "Blockchain redownload && bootstrap selected"
-    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/refreshBlkChain.sh
+    sudo -s bash $myBaseDir/bin/refreshBlkChain.sh
   ;;
   6) cd "$myBaseDir/steem/programs/steemd"
-      sudo -s $myBaseDir/firstTimeMiningInstall/steemd
+      sudo -s $myBaseDir/steemd
   ;;
   7) echo "Enabling EZSTEEM AutoRun"
-    sudo -s bash $myBaseDir/firstTimeMiningInstall/bin/setautorun.sh
+    sudo -s bash $myBaseDir/bin/setautorun.sh
   ;;
   0) echo "Exiting..."
      exit 0 
