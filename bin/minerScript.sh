@@ -150,7 +150,7 @@ PID=$!
 sleep 3
 kill $PID
 
-echo "Modifying your ~/steem/programs/steemd/witness_node_data_dir/config.ini file"
+echo "Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file"
 cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
 
 #TODO
