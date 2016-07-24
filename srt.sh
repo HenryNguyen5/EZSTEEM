@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo apt-get -y install git
 cd /var
 git clone https://github.com/omotherhen/EZSTEEM/
