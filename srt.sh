@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt-get -y install git
-cd /var
-git clone https://github.com/omotherhen/EZSTEEM/
-cd EZSTEEM
+sudo cd /var
+sudo git clone https://github.com/omotherhen/EZSTEEM/
+sudo cd EZSTEEM
 sudo bash EZSTEEM.sh
