@@ -70,6 +70,7 @@ ranStr=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 2 | head -n 1)
 echo "Generating private key for your miners..." 
 privKey=$(./vanitygen "1$ranStr" | grep Privkey) 
 formattedPrivKey=${privKey#* } 
+sleep 2
 clear
 
 cd "$myBaseDir"
