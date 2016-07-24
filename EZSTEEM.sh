@@ -6,38 +6,11 @@
 myConfig="/etc/ezsteem.conf"
 
 if [ ! -e $myConfig ]; then
-   touch "$myConfig"
-fi
-if [ ! -w "$myConfig" ]; then
-   echo "Can not write to $myConfig"
-   echo "Please run script using : "
-   echo "sudo bash ${0}"
-   exit 1
+   myBaseDir="/var/EZSTEEM" 
 fi
 
 #source the config file
 . "$myConfig"
-
-#check if the default path is set
-if [ -z ${myBaseDir+x} ];
-then
-   echo "BaseDir is unset";
-   InstallDefault="/var/EZSTEEM"
-   read -p "Where would you like the Installation Directory? [$InstallDefault]: " myBaseDir
-   myBaseDir="${myBaseDir:-$InstallDefault}"
-   #update the config file
-   echo "myBaseDir=\"$myBaseDir\"" >> $myConfig
-fi
-
-#make the base directory if it doesn't exist
-mkdir -p "$myBaseDir"
-
-
-
-
-
-
-
 
 
 
