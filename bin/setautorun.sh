@@ -36,7 +36,7 @@ mkdir -p "$myBaseDir"
 while true; do
    read -p "CONFIRM : Enable EZSTEEM autorun? [y or N] : " myResponse
    case "$myResponse" in
-      [Yy]* ) echo "\"$myBaseDir/firstTimeMiningInstall/EZSTEEM.sh\"" >> ~/.bashrc; break;;
+      [Yy]* ) echo "\"$myBaseDir/EZSTEEM.sh\"" >> ~/.bashrc; break;;
       [Nn]* ) break;;
       * ) echo "Please answer y or n";;
    esac
