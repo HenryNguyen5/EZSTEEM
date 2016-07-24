@@ -54,7 +54,7 @@ mkdir -p "$myBaseDir"
 while true; do
    read -p "Would you like to be able to be able to run EZSTEEM from any directory? [y or N] : " myResponse
    case "$myResponse" in
-      [Yy]* ) echo "export PATH=\"$myBaseDir/firstTimeMiningInstall:\$PATH\"" >> ~/.bashrc; break;;
+      [Yy]* ) echo "export PATH=\"$myBaseDir/EZSTEEM:\$PATH\"" >> ~/.bashrc; break;;
       [Nn]* ) break;;
       * ) echo "Please answer y or n";;
    esac
