@@ -113,7 +113,14 @@ sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' config.ini
 
 $pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
 $whtl
-cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../ && ./steemd --replay
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && unzip -o steem-blocks-and-index.zip && cd ../../../
+
+$pnkl "---------------------------------------------------------------------------------------"
+$pnkl "------------------------------------Starting Node--------------------------------------"
+$pnkl "---------------------------------------------------------------------------------------"
+$whtl
+
+./steemd --replay
 
 #TODO
 #Setup automatic backup of blockchain for future compiling
