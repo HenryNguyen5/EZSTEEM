@@ -1,4 +1,4 @@
-# firstTimeMiningInstall
+# EZSTEEM
 
 Please visit this link for instructions:
 
