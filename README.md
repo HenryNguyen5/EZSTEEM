@@ -2,4 +2,4 @@
 
 Please visit this link for instructions:
 
-https://steemit.com/node/@omotherhen/omotherhen-s-one-click-script-for-easy-node-setup-on-a-linux-vm-support-the-backbone-of-your-community
+https://steemit.com/allinone/@omotherhen/ezsteem-suite-1-0-the-ez-way-to-setup-your-steem-miner-node-in-a-linux-vm-windows-compatible
