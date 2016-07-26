@@ -4,14 +4,38 @@
 
 #check if a configuration file exists for ezsteem and whether it can be modified
 myConfig="/etc/ezsteem.conf"
-
 if [ ! -e $myConfig ]; then
-   myBaseDir="/var/EZSTEEM" 
+   sudo -s touch "$myConfig"
 fi
 
 #source the config file
 . "$myConfig"
 
+#set the Base Directory to be the directory that EZSTEEM.sh is being run from
+myNewBaseDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+
+
+#check if the default path is set
+if [ -z ${myBaseDir+x} ];
+then
+   #if not, add it to the configuration file
+   sudo -s bash -c "echo myBaseDir=\"$myNewBaseDir\" >> $myConfig"
+else
+   #if it exists, set it to the directory where EZSTEEM.sh is being run from
+   #check to see if they are the same
+   if [ $myBaseDir != $myNewBaseDir ];
+   then
+      myBaseDir="$myNewBaseDir"
+      sudo -s sed -i "s|myBaseDir=.*$|myBaseDir=$myBaseDir|" "$myConfig"
+   fi
+fi
+
+#check if myConfigFiel is set
+if [ -z ${myConfigFile+x} ];
+then
+   sudo -s bash -c "echo myConfigFile=\"$myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini\" >> $myConfig"
+fi
 
 
 
