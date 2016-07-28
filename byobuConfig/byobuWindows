@@ -1,0 +1,8 @@
+new-window 'sudo /var/EZSTEEM.sh' ;
+new-window -n EZSTEEM 'sudo /var/EZSTEEM.sh';
+new-window -n prompt 'bash';
+split-window ;
+split-window ;
+select-layout main-vertical;
+select-pane -t 0;
+resize-pane -t 0 -R 20;
