@@ -53,18 +53,20 @@ mkdir -p "$myBaseDir"
 myConfigFile=$myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini
 
 cd "$myBaseDir"
-sudo apt-get -y install openssh-server 
-sudo apt-get update 
-sudo apt-get -y upgrade 
-sudo apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
-git clone https://github.com/steemit/steem && cd steem && git checkout v0.12.1 && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . && make
+sudo -s  apt-get -y install openssh-server 
+sudo -s apt-get update 
+sudo -s apt-get -y upgrade 
+sudo -s apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
+sudo -s git clone https://github.com/steemit/steem && cd steem && git checkout v0.12.1 && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . && make
 clear
+sudo -s chown -R $USER $myBaseDir
 
 
 #needed for vanitygen, creating private keys
-sudo apt-get -y install libpcre3-dev 
+sudo -s apt-get -y install libpcre3-dev 
 cd "$myBaseDir" 
 git clone https://github.com/samr7/vanitygen 
+sudo -s chown -R $USER $myBaseDir
 cd vanitygen && make 
 ranStr=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 2 | head -n 1) 
 echo "Generating private key for your miners..." 
@@ -242,7 +244,7 @@ sed -i "s/# miner =/&\n$str/" "$myConfigFile"
 sed -i "s/# mining-threads =/$mining_threads/" "$myConfigFile"
 
 $e "$pnk Boot-strapping blockchain for fast setup, then starting the miner! $wht"
-cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && sudo unzip -o steem-blocks-and-index.zip && sudo rm -f steem-blocks-and-index.zip && cd ../../../ 
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && sudo -s unzip -o steem-blocks-and-index.zip && sudo -s rm -f steem-blocks-and-index.zip && cd ../../../ 
 
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------------Starting Miner-------------------------------------"

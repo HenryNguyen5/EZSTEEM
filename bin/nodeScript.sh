@@ -61,11 +61,12 @@ while true; do
 done
 
 cd "$myBaseDir"
-sudo apt-get -y install openssh-server 
-sudo apt-get update 
-sudo apt-get -y upgrade 
-sudo apt-get -y install unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen  
+sudo -s apt-get -y install openssh-server 
+sudo -s apt-get update 
+sudo -s apt-get -y upgrade 
+sudo -s apt-get -y install unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen  
 git clone https://github.com/steemit/steem && cd steem && git checkout v0.12.1 && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . && make
+sudo -s chown -R $USER $myBaseDir
 clear
 
 cd "$myBaseDir/steem/programs/steemd"
@@ -113,7 +114,7 @@ sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' config.ini
 
 $pnkl "Boot-strapping blockchain for fast setup, then starting the miner!"
 $whtl
-cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && sudo unzip -o steem-blocks-and-index.zip && sudo rm -f steem-blocks-and-index.zip && cd ../../../
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && sudo -s unzip -o steem-blocks-and-index.zip && sudo -s rm -f steem-blocks-and-index.zip && cd ../../../
 
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------------Starting Node--------------------------------------"
