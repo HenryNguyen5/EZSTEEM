@@ -43,6 +43,7 @@ then
    sudo -s bash -c "echo myConfigFile=\"$myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini\" >> $myConfig"
 fi
 
+   sudo -s chown -R $USER $myBaseDir
 
 
 clear
