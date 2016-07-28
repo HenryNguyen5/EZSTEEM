@@ -20,7 +20,13 @@ myNewBaseDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z ${myBaseDir+x} ];
 then
    #if not, add it to the configuration file
+   echo "Updating config file with base directory path"
    sudo -s bash -c "echo myBaseDir=\"$myNewBaseDir\" >> $myConfig"
+   #if it is not, then this is likely the first time running.
+   #Change Ownership of the Base Directory
+   echo "Changing ownership of base directory"
+   sudo -s chown -R $USER $myBaseDir
+
 else
    #if it exists, set it to the directory where EZSTEEM.sh is being run from
    #check to see if they are the same
@@ -31,7 +37,7 @@ else
    fi
 fi
 
-#check if myConfigFiel is set
+#check if myConfigFile is set
 if [ -z ${myConfigFile+x} ];
 then
    sudo -s bash -c "echo myConfigFile=\"$myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini\" >> $myConfig"
