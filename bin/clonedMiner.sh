@@ -53,11 +53,12 @@ echo
 cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir"
 $pnkl "Enter in how many threads you want to mine on this machine $wht"
 read threads
-sed -i "s/mining-threads = [0-9]*/mining-threads = $threads/" config.ini
-sed -i 's/witness = /# witness =/' config.ini
+sudo -s sed -i "s/mining-threads = [0-9]*/mining-threads = $threads/" config.ini
+sudo -s sed -i 's/witness = /# witness =/' config.ini
 cd ..
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------------Starting Miner-------------------------------------"
 $pnkl "---------------------------------------------------------------------------------------"
 $whtl
+sudo -s chown -R $USER $myBaseDir
 ./steemd --replay
