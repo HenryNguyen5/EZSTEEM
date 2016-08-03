@@ -1,5 +1,6 @@
 //This is a javascript wrapper for steem cli_wallet
 //Usage: ./ezWallet.js EZSTEEMDir
+
 var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
 var fs = require('fs');
@@ -7,9 +8,23 @@ var fs = require('fs');
 var client = jayson.client.http('http://127.0.0.1:8091');
 var minerAccountArray = [];
 var minerKeyArray = [];
-var EZSTEEMDir = process.argv[2];
 var boolTrue = 1;
 var boolFalse = 0;
+
+var getConfDir = function(){
+  var EZSTEEMDir = "/etc/ezsteem.conf";
+  var steemConf = "/var/EZSTEEM/steem/programs/steemd/witness_node_data_dir/config.ini";
+  //grab config file location from ezsteem.conf
+  fs.readfile(EZSTEEMDir,function(err, rawContents){
+    var lines = rawContents.split(/\n/);
+    for (var line in lines){
+      if(line.match("/myConfigFile/")){
+        steemConf = line.split('=')[1];
+      }
+    }
+  return steemConf;
+  });
+};
 
 //fill in the miners names and keys
 var getMinerInfo = function(err, rawContents){
@@ -18,19 +33,27 @@ var getMinerInfo = function(err, rawContents){
   var lines = rawContents.split(/\n/);
   //iterate through the lines until value of interest is found
   //find miner = [NAME,KEY] and store only the [NAME,KEY] into accKeyArr
-  for(i = 0; i < lines.length; i++){
+  for(var i = 0; i < lines.length; i++){
     if(lines[i].match("/^miner =/")){
-      var minerArr = lines[i].split(" ");
-      accKeyArr += minerArr[2];
+      var minerArr = JSON.parse(lines[i].split(" ")[2]);
+      accKeyArr.concat(minerArr);
     }
   }
   console.log(accKeyArr);
-  TODO
   //Seperate NAME and KEY into their respective arrays, minerAccountArray and minerKeyArray
-  console.log(JSON.parse(accKeyArr));
-  accKeyArr = JSON.parse(accKeyArr);
+  for(var i = 0; i < accKeyArr.length; i++){
+    if(i%2 === 0){
+      minerAccountArray.push(accKeyArr[i]);
+    }
+    else{
+      minerKeyArray.push(accKeyArr[i]);
+    }
+  }
+  console.log(minerAccountArray);
+  console.log(accKeyArr);
 };
 
+fs.readfile(getConfDir(),getMinerInfo);
 
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
@@ -50,8 +73,6 @@ broadcast: true if you wish to broadcast the transaction. (type: bool)
 */
 var getWithdrawVestingRoute = function(){
   //fill in required miner arrays
-  fs.readfile(EZSTEEMDir,getMinerInfo);
-
   var reqArr = [];
   //prompt the user for their destination wallet and the percentile
   var schema = {
@@ -72,8 +93,6 @@ var getWithdrawVestingRoute = function(){
       reqArr.push(results);
       console.log(results);
     }
-    //1 is true
-    //0 is false
     reqArr.push(boolFalse);
     reqArr.push(boolFalse);
   });
@@ -143,6 +162,7 @@ true if the wallet is locked
 var isLocked = function(){
 
 };
-getWithdrawVestingRoute();
+
+//getWithdrawVestingRoute();
 TODO //Some function for importing all of the miner keys and accounts into cli_wallet, then locking them via user password
-    //then we will be able to use getWithdrawVestingRoute()
+//then we will be able to use getWithdrawVestingRoute()
