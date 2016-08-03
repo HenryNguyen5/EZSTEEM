@@ -1,5 +1,5 @@
 //This is a javascript wrapper for steem cli_wallet
-//Usage: ./ezWallet.js EZSTEEMDir
+//Usage: ./ezWallet.js
 
 var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
@@ -11,49 +11,48 @@ var minerKeyArray = [];
 var boolTrue = 1;
 var boolFalse = 0;
 
-var getConfDir = function(){
-  var EZSTEEMDir = "/etc/ezsteem.conf";
-  var steemConf = "/var/EZSTEEM/steem/programs/steemd/witness_node_data_dir/config.ini";
-  //grab config file location from ezsteem.conf
-  fs.readfile(EZSTEEMDir,function(err, rawContents){
-    var lines = rawContents.split(/\n/);
-    for (var line in lines){
-      if(line.match("/myConfigFile/")){
-        steemConf = line.split('=')[1];
-      }
-    }
-  return steemConf;
-  });
+var getConfDir = function() {
+    var EZSTEEMDir = "/etc/ezsteem.conf";
+    var steemConf = "/var/EZSTEEM/steem/programs/steemd/witness_node_data_dir/config.ini";
+    //grab config file location from ezsteem.conf
+    fs.readfile(EZSTEEMDir, function(err, rawContents) {
+        var lines = rawContents.split(/\n/);
+        for (var line in lines) {
+            if (line.match("/myConfigFile/")) {
+                steemConf = line.split('=')[1];
+            }
+        }
+        return steemConf;
+    });
 };
 
 //fill in the miners names and keys
-var getMinerInfo = function(err, rawContents){
-  //split on new lines
-  var accKeyArr = [];
-  var lines = rawContents.split(/\n/);
-  //iterate through the lines until value of interest is found
-  //find miner = [NAME,KEY] and store only the [NAME,KEY] into accKeyArr
-  for(var i = 0; i < lines.length; i++){
-    if(lines[i].match("/^miner =/")){
-      var minerArr = JSON.parse(lines[i].split(" ")[2]);
-      accKeyArr.concat(minerArr);
+var getMinerInfo = function(err, rawContents) {
+    //split on new lines
+    var accKeyArr = [];
+    var lines = rawContents.split(/\n/);
+    //iterate through the lines until value of interest is found
+    //find miner = [NAME,KEY] and store only the [NAME,KEY] into accKeyArr
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].match("/^miner =/")) {
+            var minerArr = JSON.parse(lines[i].split(" ")[2]);
+            accKeyArr.concat(minerArr);
+        }
     }
-  }
-  console.log(accKeyArr);
-  //Seperate NAME and KEY into their respective arrays, minerAccountArray and minerKeyArray
-  for(var i = 0; i < accKeyArr.length; i++){
-    if(i%2 === 0){
-      minerAccountArray.push(accKeyArr[i]);
+    console.log(accKeyArr);
+    //Seperate NAME and KEY into their respective arrays, minerAccountArray and minerKeyArray
+    for (var i = 0; i < accKeyArr.length; i++) {
+        if (i % 2 === 0) {
+            minerAccountArray.push(accKeyArr[i]);
+        } else {
+            minerKeyArray.push(accKeyArr[i]);
+        }
     }
-    else{
-      minerKeyArray.push(accKeyArr[i]);
-    }
-  }
-  console.log(minerAccountArray);
-  console.log(accKeyArr);
+    console.log(minerAccountArray);
+    console.log(accKeyArr);
 };
 
-fs.readfile(getConfDir(),getMinerInfo);
+fs.readfile(getConfDir(), getMinerInfo);
 
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
@@ -71,40 +70,40 @@ auto_vest: Set to true if the from account should receive the VESTS as
 VESTS, or false if it should receive them as STEEM. (type: bool)
 broadcast: true if you wish to broadcast the transaction. (type: bool)
 */
-var getWithdrawVestingRoute = function(){
-  //fill in required miner arrays
-  var reqArr = [];
-  //prompt the user for their destination wallet and the percentile
-  var schema = {
-    properties: {
-      dst: {
-        description: "Which account do you want to transfer all of your miner accounts SteemPower to?"
-      },
-      percent: {
-        description: "What percentage of the SteemPower mined would you like to send? (1-100)%"
-      }
-    }
-  };
-  prompt.start();
+var getWithdrawVestingRoute = function() {
+    //fill in required miner arrays
+    var reqArr = [];
+    //prompt the user for their destination wallet and the percentile
+    var schema = {
+        properties: {
+            dst: {
+                description: "Which account do you want to transfer all of your miner accounts SteemPower to?"
+            },
+            percent: {
+                description: "What percentage of the SteemPower mined would you like to send? (1-100)%"
+            }
+        }
+    };
+    prompt.start();
 
-  prompt.get(schema, function(err, result){
-    result.percent *= 100;
-    for (var results in result){
-      reqArr.push(results);
-      console.log(results);
-    }
-    reqArr.push(boolFalse);
-    reqArr.push(boolFalse);
-  });
-
-  //for each miner name, call set_withdraw_vesting_route
-  for(i = 0; i < minerAccountArray.length; i++){
-    reqArr.unshift(minerAccountArray[i]);
-    client.request('set_withdraw_vesting_route', reqArr, function(err, response){
-
+    prompt.get(schema, function(err, result) {
+        result.percent *= 100;
+        for (var results in result) {
+            reqArr.push(results);
+            console.log(results);
+        }
+        reqArr.push(boolFalse);
+        reqArr.push(boolFalse);
     });
-    reqArr.shift();
-  }
+
+    //for each miner name, call set_withdraw_vesting_route
+    for (i = 0; i < minerAccountArray.length; i++) {
+        reqArr.unshift(minerAccountArray[i]);
+        client.request('set_withdraw_vesting_route', reqArr, function(err, response) {
+
+        });
+        reqArr.shift();
+    }
 };
 
 
@@ -115,7 +114,7 @@ Sets a new password on the wallet.
 
 The wallet must be either 'new' or 'unlocked' to execute this command.
 */
-var setWalletPass = function(){
+var setWalletPass = function() {
 
 };
 
@@ -131,7 +130,7 @@ example: import_key 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
 Parameters:
 wif_key: the WIF Private Key to import (type: string)
 */
-var importMinerPrivateKeys =  function(){
+var importMinerPrivateKeys = function() {
 
 };
 
@@ -146,7 +145,7 @@ Parameters:
 password: the password previously set with 'set_password()' (type:
 string)
 */
-var unlockWallet = function(){
+var unlockWallet = function() {
 
 };
 
@@ -159,7 +158,7 @@ This state can be changed by calling 'lock()' or 'unlock()'.
 Returns
 true if the wallet is locked
 */
-var isLocked = function(){
+var isLocked = function() {
 
 };
 
