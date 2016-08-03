@@ -48,14 +48,27 @@ fi
 #make the base directory if it doesn't exist
 mkdir -p "$myBaseDir"
 
+#determine how many cores to use when building the miner
+myMemTotal=$(awk '/MemTotal/' /proc/meminfo|awk '{print $2}')
+myCoreCount=2
+
+if [ "$myMemTotal" -lt  "4028944" ] ; then
+   myCoreCount=1
+else
+   if [ "$myMemTotal" -gt  "6093327" ] ; then
+      myCoreCount=4
+   fi
+fi
+
+
 
 cd "$myBaseDir/steem"
-git fetch
-git checkout v0.12.2
-rm -f CMakeCache.txt
-make -s clean > /dev/null
-cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON .
-make --silent 
+sudo -s git fetch
+sudo -s git checkout v0.12.2
+sudo -s rm -f CMakeCache.txt
+sudo -s make -s clean > /dev/null
+sudo -s cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON .
+sudo -s make --silent -j "$myCoreCount"
 
 clear
 $pnkl "---------------------------------------------------------------------------------------"

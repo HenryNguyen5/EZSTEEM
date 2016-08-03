@@ -52,12 +52,33 @@ mkdir -p "$myBaseDir"
 
 myConfigFile=$myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini
 
+#determine how many cores to use when building the miner
+myMemTotal=$(awk '/MemTotal/' /proc/meminfo|awk '{print $2}')
+myCoreCount=2
+
+if [ "$myMemTotal" -lt  "4028944" ] ; then
+   myCoreCount=1
+else
+   if [ "$myMemTotal" -gt  "6093327" ] ; then
+      myCoreCount=4
+   fi
+fi
+
+
+
+
 cd "$myBaseDir"
 sudo -s  apt-get -y install openssh-server 
 sudo -s apt-get update 
 sudo -s apt-get -y upgrade 
 sudo -s apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen 
-sudo -s git clone https://github.com/steemit/steem && cd steem && git checkout v0.12.2 && git submodule update --init --recursive && cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . && make
+sudo -s git clone https://github.com/steemit/steem 
+sudo -s chown -R $USER $myBaseDir
+cd steem 
+sudo -s git checkout v0.12.2 
+sudo -s git submodule update --init --recursive 
+sudo -s cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . 
+sudo -s make -j "$myCoreCount"
 clear
 sudo -s chown -R $USER $myBaseDir
 
@@ -204,12 +225,12 @@ str+="seed-node = 52.4.250.181:39705\n"
 str+="seed-node = 81.89.101.133:2001\n"
 str+="seed-node = 46.252.27.1:1337\n"
 
-sed -i "s/# seed-node =/&\n$str/" "$myConfigFile"
+sudo -s sed -i "s/# seed-node =/&\n$str/" "$myConfigFile"
 
 
 #Replace "# rpc-endpoint = "
 #with    "rpc-endpoint = 127.0.0.1:8090"
-sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' "$myConfigFile"
+sudo -s sed -i 's/# rpc-endpoint = /rpc-endpoint = 127.0.0.1:8090/' "$myConfigFile"
 
 
 #Replace "# witness = "
@@ -222,7 +243,7 @@ do
 	str+="${witnessArr[$index]}\n"
 	index=$[$index+1]
 done
-sed -i "s/# witness =/&\n$str/" "$myConfigFile"
+sudo -s sed -i "s/# witness =/&\n$str/" "$myConfigFile"
 
 
 #Replace "#  miner = "
@@ -236,21 +257,26 @@ do
 	str+="${minerArr[$index]}\n"
 	index=$[$index+1]
 done
-sed -i "s/# miner =/&\n$str/" "$myConfigFile"
+sudo -s sed -i "s/# miner =/&\n$str/" "$myConfigFile"
 
 
 #Replace "# mining-threads"
 #with contents of $mining_threads
-sed -i "s/# mining-threads =/$mining_threads/" "$myConfigFile"
+sudo -s sed -i "s/# mining-threads =/$mining_threads/" "$myConfigFile"
 
 $e "$pnk Boot-strapping blockchain for fast setup, then starting the miner! $wht"
-cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" && wget http://einfachmalnettsein.de/steem-blocks-and-index.zip && sudo -s unzip -o steem-blocks-and-index.zip && sudo -s rm -f steem-blocks-and-index.zip && cd ../../../ 
+cd "$myBaseDir/steem/programs/steemd/witness_node_data_dir/blockchain/database/" 
+sudo -s  wget http://einfachmalnettsein.de/steem-blocks-and-index.zip 
+sudo -s unzip -o steem-blocks-and-index.zip 
+sudo -s rm -f steem-blocks-and-index.zip 
+cd ../../../ 
 
 $pnkl "---------------------------------------------------------------------------------------"
 $pnkl "------------------------------------Starting Miner-------------------------------------"
 $pnkl "---------------------------------------------------------------------------------------"
 $whtl
 cd "$myBaseDir/steem/programs/steemd"
+sudo -s chown -R $USER $myBaseDir
 ./steemd --replay
 
 #TODO
