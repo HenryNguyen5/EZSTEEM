@@ -27,7 +27,8 @@ var getMinerInfo = function(err, rawContents){
   console.log(accKeyArr);
   TODO
   //Seperate NAME and KEY into their respective arrays, minerAccountArray and minerKeyArray
-  console.log(JSON.stringify(accKeyArr));
+  console.log(JSON.parse(accKeyArr));
+  accKeyArr = JSON.parse(accKeyArr);
 };
 
 
