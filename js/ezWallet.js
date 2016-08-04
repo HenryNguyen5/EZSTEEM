@@ -77,17 +77,20 @@ var getWithdrawVestingRoute = function() {
     var schema = {
         properties: {
             dst: {
-                description: "Which account do you want to transfer all of your miner accounts SteemPower to?"
+                description: "Which account do you want to transfer all of your miner accounts SteemPower to?",
+                type: 'string',
+                required: true
             },
             percent: {
-                description: "What percentage of the SteemPower mined would you like to send? (1-100)%"
+                description: "What percentage of the SteemPower mined would you like to send? (1-100)%",
+                type: 'integer'
+                required: true
+                before: function(value){return value*100;}
             }
         }
     };
     prompt.start();
-
     prompt.get(schema, function(err, result) {
-        result.percent *= 100;
         for (var results in result) {
             reqArr.push(results);
             console.log(results);
