@@ -17,10 +17,10 @@ var getConfDir = function() {
     var steemConf = "/var/EZSTEEM/steem/programs/steemd/witness_node_data_dir/config.ini";
     //grab config file location from ezsteem.conf
     fs.readfile(EZSTEEMDir, function(err, rawContents) {
-      if(err){
-        console.log("An error has occured with getConfDir");
-        throw err;
-      }
+        if (err) {
+            console.log("An error has occured with getConfDir");
+            throw err;
+        }
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
             if (line.match("/myConfigFile/")) {
@@ -33,10 +33,10 @@ var getConfDir = function() {
 
 //fill in the miners names and keys
 var getMinerInfo = function(err, rawContents) {
-  if(err){
-    console.log("An error has occured with getMinerInfo");
-    throw err;
-  }
+    if (err) {
+        console.log("An error has occured with getMinerInfo");
+        throw err;
+    }
     //split on new lines
     var accKeyArr = [];
     var lines = rawContents.split(/\n/);
@@ -86,15 +86,17 @@ var getWithdrawVestingRoute = function() {
     var schema = {
         properties: {
             dst: {
-                description: "Which account do you want to transfer all of your miner accounts SteemPower to?",
+                description: 'Which account do you want to transfer all of your miner accounts SteemPower to?',
                 type: 'string',
                 required: true
             },
             percent: {
-                description: "What percentage of the SteemPower mined would you like to send? (1-100)%",
+                description: 'What percentage of the SteemPower mined would you like to send? (1-100)%',
                 type: 'integer'
                 required: true
-                before: function(value){return value*100;}
+                before: function(value) {
+                    return value * 100;
+                }
             }
         }
     };
@@ -112,14 +114,15 @@ var getWithdrawVestingRoute = function() {
     //possible change: allow user to select what miners to transfer their steem power
     //instead of automatically looping through all accounts
     //(or give both options)
+    //should be using rpc call get_account to verify account names
     for (i = 0; i < minerAccountArray.length; i++) {
         reqArr.unshift(minerAccountArray[i]);
         client.request('set_withdraw_vesting_route', reqArr, function(err, response) {
-          if(err){
-            console.log("An error with set_withdraw_vesting_route has occured");
-            throw err;
-          }
-          console.log(response.result);
+            if (err) {
+                console.log('An error with set_withdraw_vesting_route has occured');
+                throw err;
+            }
+            console.log(response.result);
         });
         reqArr.shift();
     }
@@ -132,11 +135,14 @@ gethelp set_password
 Sets a new password on the wallet.
 
 The wallet must be either 'new' or 'unlocked' to execute this command.
+
 */
 var setWalletPass = function() {
-  //prompt user for a password and verify it
-
+    //prompt user for a password and verify it
+    //need to check state of the wallet, if it is new or not first
+    //before we prompt the user to set a password
 };
+
 
 
 /*
@@ -151,7 +157,16 @@ Parameters:
 wif_key: the WIF Private Key to import (type: string)
 */
 var importMinerPrivateKeys = function() {
-  //take keys from minerKeyArray and import them via loop
+    //take keys from minerKeyArray and import them via loop
+    for (var key in minerKeyArray) {
+        client.request('import_key', [key], function(err, response) {
+            if (err) {
+                console.log("An error has occured with import_key");
+                throw err;
+            }
+            console.log("import_key result: " + response.result);
+        });
+    }
 
 };
 
@@ -167,7 +182,35 @@ password: the password previously set with 'set_password()' (type:
 string)
 */
 var unlockWallet = function() {
-  //call is_locked, then if it is locked prompt user for password
+    //call is_locked, then if it is locked prompt user for password
+    if (isLocked()) {
+        var schema = {
+            properties: {
+                password: {
+                    description: 'Your wallet is locked, please enter your password to unlock it',
+                    type: 'string',
+                    hidden: true,
+                    replace: '*',
+                    required: true
+                }
+            }
+        };
+        prompt.start();
+        prompt.get(schema, function(err, result) {
+            if (err) {
+                console.log("Password prompt error");
+                throw err;
+            }
+            console.log(result.password);
+            client.request('unlock', [result.password], function(err, response) {
+                if (err) {
+                    console.log("An error with unlock has occured");
+                    throw err;
+                }
+                console.log("Unlock result: " + response.result);
+            });
+        })
+    }
 
 };
 
@@ -181,8 +224,15 @@ Returns
 true if the wallet is locked
 */
 var isLocked = function() {
-  //use for checking if wallet is locked before performing any actions
-
+    //use for checking if wallet is locked before performing any actions
+    client.request('is_locked', [], function(err, response) {
+        if (err) {
+            console.log("An error with is_locked has occured: SHOULD NOT HAPPEN EVER");
+            throw err;
+        }
+        console.log("isLocked Return result:" + response.result);
+        return reponse.result;
+    });
 };
 
 //getWithdrawVestingRoute();
