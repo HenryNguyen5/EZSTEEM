@@ -42,7 +42,7 @@ var getMinerInfo = function(err, rawContents) {
     var lines = rawContents.split(/\n/);
     //iterate through the lines until value of interest is found
     //find miner = [NAME,KEY] and store only the [NAME,KEY] into accKeyArr
-    for (var i = 0; i < lines.length; i++) {
+    for (i = 0; i < lines.length; i++) {
         if (lines[i].match("/^miner =/")) {
             var minerArr = JSON.parse(lines[i].split(" ")[2]);
             accKeyArr.concat(minerArr);
@@ -50,7 +50,7 @@ var getMinerInfo = function(err, rawContents) {
     }
     console.log(accKeyArr);
     //Seperate NAME and KEY into their respective arrays, minerAccountArray and minerKeyArray
-    for (var i = 0; i < accKeyArr.length; i++) {
+    for (i = 0; i < accKeyArr.length; i++) {
         if (i % 2 === 0) {
             minerAccountArray.push(accKeyArr[i]);
         } else {
@@ -92,8 +92,8 @@ var getWithdrawVestingRoute = function() {
             },
             percent: {
                 description: 'What percentage of the SteemPower mined would you like to send? (1-100)%',
-                type: 'integer'
-                required: true
+                type: 'integer',
+                required: true,
                 before: function(value) {
                     return value * 100;
                 }
@@ -127,7 +127,6 @@ var getWithdrawVestingRoute = function() {
         reqArr.shift();
     }
 };
-
 
 /*
 gethelp set_password
@@ -209,7 +208,7 @@ var unlockWallet = function() {
                 }
                 console.log("Unlock result: " + response.result);
             });
-        })
+        });
     }
 
 };
