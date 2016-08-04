@@ -1,5 +1,6 @@
 //This is a javascript wrapper for steem cli_wallet
 //Usage: ./ezWallet.js
+//ORDER OF EXCECUTION:is_locked->set_password->unlock->getConfDir->importMinerPrivateKeys->set_withdraw_vesting_route
 
 var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
@@ -108,6 +109,9 @@ var getWithdrawVestingRoute = function() {
     });
 
     //for each miner name, call set_withdraw_vesting_route
+    //possible change: allow user to select what miners to transfer their steem power
+    //instead of automatically looping through all accounts
+    //(or give both options)
     for (i = 0; i < minerAccountArray.length; i++) {
         reqArr.unshift(minerAccountArray[i]);
         client.request('set_withdraw_vesting_route', reqArr, function(err, response) {
@@ -130,6 +134,7 @@ Sets a new password on the wallet.
 The wallet must be either 'new' or 'unlocked' to execute this command.
 */
 var setWalletPass = function() {
+  //prompt user for a password and verify it
 
 };
 
@@ -146,6 +151,7 @@ Parameters:
 wif_key: the WIF Private Key to import (type: string)
 */
 var importMinerPrivateKeys = function() {
+  //take keys from minerKeyArray and import them via loop
 
 };
 
@@ -161,6 +167,7 @@ password: the password previously set with 'set_password()' (type:
 string)
 */
 var unlockWallet = function() {
+  //call is_locked, then if it is locked prompt user for password
 
 };
 
@@ -174,9 +181,10 @@ Returns
 true if the wallet is locked
 */
 var isLocked = function() {
+  //use for checking if wallet is locked before performing any actions
 
 };
 
 //getWithdrawVestingRoute();
-TODO //Some function for importing all of the miner keys and accounts into cli_wallet, then locking them via user password
+//Some function for importing all of the miner keys and accounts into cli_wallet, then locking them via user password
 //then we will be able to use getWithdrawVestingRoute()
