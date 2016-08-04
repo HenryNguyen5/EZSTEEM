@@ -1,5 +1,5 @@
 //This is a javascript wrapper for steem cli_wallet
-//Usage: ./ezWallet.js
+//Usage: node ezWallet.js
 //ORDER OF EXCECUTION:is_locked->set_password->unlock->getConfDir->importMinerPrivateKeys->set_withdraw_vesting_route
 
 var jayson = require('./node_modules/jayson');
@@ -16,15 +16,15 @@ var getConfDir = function() {
     var EZSTEEMDir = "/etc/ezsteem.conf";
     var steemConf = "/var/EZSTEEM/steem/programs/steemd/witness_node_data_dir/config.ini";
     //grab config file location from ezsteem.conf
-    fs.readfile(EZSTEEMDir, function(err, rawContents) {
+    fs.readFile(EZSTEEMDir, 'utf8', function(err, rawContents) {
         if (err) {
             console.log("An error has occured with getConfDir");
             throw err;
         }
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
-            if (line.match("/myConfigFile/")) {
-                steemConf = line.split('=')[1];
+            if (lines[line].match("/myConfigFile/")) {
+                steemConf = lines[line].split('=')[1];
             }
         }
         return steemConf;
@@ -61,7 +61,7 @@ var getMinerInfo = function(err, rawContents) {
     console.log(accKeyArr);
 };
 
-fs.readfile(getConfDir(), getMinerInfo);
+fs.readFile(getConfDir(), 'utf8', getMinerInfo);
 
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
@@ -103,8 +103,8 @@ var getWithdrawVestingRoute = function() {
     prompt.start();
     prompt.get(schema, function(err, result) {
         for (var results in result) {
-            reqArr.push(results);
-            console.log(results);
+            reqArr.push(result[results]);
+            console.log(result[results]);
         }
         reqArr.push(boolFalse);
         reqArr.push(boolFalse);
@@ -158,7 +158,7 @@ wif_key: the WIF Private Key to import (type: string)
 var importMinerPrivateKeys = function() {
     //take keys from minerKeyArray and import them via loop
     for (var key in minerKeyArray) {
-        client.request('import_key', [key], function(err, response) {
+        client.request('import_key', [minerKeyArray[key]], function(err, response) {
             if (err) {
                 console.log("An error has occured with import_key");
                 throw err;
