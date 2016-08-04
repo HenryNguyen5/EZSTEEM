@@ -16,6 +16,10 @@ var getConfDir = function() {
     var steemConf = "/var/EZSTEEM/steem/programs/steemd/witness_node_data_dir/config.ini";
     //grab config file location from ezsteem.conf
     fs.readfile(EZSTEEMDir, function(err, rawContents) {
+      if(err){
+        console.log("An error has occured with getConfDir");
+        throw err;
+      }
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
             if (line.match("/myConfigFile/")) {
@@ -28,6 +32,10 @@ var getConfDir = function() {
 
 //fill in the miners names and keys
 var getMinerInfo = function(err, rawContents) {
+  if(err){
+    console.log("An error has occured with getMinerInfo");
+    throw err;
+  }
     //split on new lines
     var accKeyArr = [];
     var lines = rawContents.split(/\n/);
@@ -103,7 +111,11 @@ var getWithdrawVestingRoute = function() {
     for (i = 0; i < minerAccountArray.length; i++) {
         reqArr.unshift(minerAccountArray[i]);
         client.request('set_withdraw_vesting_route', reqArr, function(err, response) {
-
+          if(err){
+            console.log("An error with set_withdraw_vesting_route has occured");
+            throw err;
+          }
+          console.log(response.result);
         });
         reqArr.shift();
     }
