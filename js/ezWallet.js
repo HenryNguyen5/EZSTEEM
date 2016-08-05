@@ -13,39 +13,46 @@ var boolTrue = 1;
 var boolFalse = 0;
 
 var getConfDir = function() {
-    var EZSTEEMDir = "/etc/ezsteem.conf";
+    var EZSTEEMDir = '/etc/ezsteem.conf';
     var steemConf = "/var/EZSTEEM/steem/programs/steemd/witness_node_data_dir/config.ini";
     //grab config file location from ezsteem.conf
-    fs.readFile(EZSTEEMDir, 'utf8', function(err, rawContents) {
+    fs.readFile('/etc/ezsteem.conf', 'utf8', function(err, rawContents) {
         if (err) {
             console.log("An error has occured with getConfDir");
             throw err;
         }
+	console.log("rawContents" + rawContents);
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
             if (lines[line].match("/myConfigFile/")) {
                 steemConf = lines[line].split('=')[1];
             }
         }
-        return steemConf;
+	console.log("steemconf:" + steemConf);
+        return fs.readFile(steemConf,'utf8',getMinerInfo);
     });
 };
-
+getConfDir();
 //fill in the miners names and keys
 var getMinerInfo = function(err, rawContents) {
     if (err) {
         console.log("An error has occured with getMinerInfo");
         throw err;
     }
+	//console.log(rawContents);
     //split on new lines
     var accKeyArr = [];
     var lines = rawContents.split(/\n/);
+    //console.log(lines);
     //iterate through the lines until value of interest is found
     //find miner = [NAME,KEY] and store only the [NAME,KEY] into accKeyArr
     for (i = 0; i < lines.length; i++) {
-        if (lines[i].match("/^miner =/")) {
+        if (lines[i].match(/^miner = /)) {
+	//console.log(lines[i]);
             var minerArr = JSON.parse(lines[i].split(" ")[2]);
-            accKeyArr.concat(minerArr);
+	//console.log(minerArr);
+        accKeyArr =     accKeyArr.concat(minerArr);
+//	console.log(accKeyArr);
         }
     }
     console.log(accKeyArr);
@@ -58,10 +65,9 @@ var getMinerInfo = function(err, rawContents) {
         }
     }
     console.log(minerAccountArray);
-    console.log(accKeyArr);
+    console.log(minerKeyArray);
 };
 
-fs.readFile(getConfDir(), 'utf8', getMinerInfo);
 
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
