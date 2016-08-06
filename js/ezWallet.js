@@ -5,6 +5,13 @@
 var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
 var fs = require('fs');
+var rpcIDs = {
+  getWithdrawVestingRouteID : 1,
+  setWalletPassID : 2,
+  importMinerPrivateKeysID : 3,
+  unlockWalletID : 4,
+  isLockedID : 5
+};
 //create a client to interact with cli_wallet
 var client = jayson.client.http('http://127.0.0.1:8091');
 var minerAccountArray = [];
@@ -21,15 +28,14 @@ var getConfDir = function() {
             console.log("An error has occured with getConfDir");
             throw err;
         }
-	console.log("rawContents" + rawContents);
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
             if (lines[line].match("/myConfigFile/")) {
                 steemConf = lines[line].split('=')[1];
             }
         }
-	console.log("steemconf:" + steemConf);
-        return fs.readFile(steemConf,'utf8',getMinerInfo);
+        console.log("steemconf:" + steemConf);
+        return fs.readFile(steemConf, 'utf8', getMinerInfo);
     });
 };
 getConfDir();
@@ -39,20 +45,15 @@ var getMinerInfo = function(err, rawContents) {
         console.log("An error has occured with getMinerInfo");
         throw err;
     }
-	//console.log(rawContents);
     //split on new lines
     var accKeyArr = [];
     var lines = rawContents.split(/\n/);
-    //console.log(lines);
     //iterate through the lines until value of interest is found
     //find miner = [NAME,KEY] and store only the [NAME,KEY] into accKeyArr
     for (i = 0; i < lines.length; i++) {
         if (lines[i].match(/^miner = /)) {
-	//console.log(lines[i]);
             var minerArr = JSON.parse(lines[i].split(" ")[2]);
-	//console.log(minerArr);
-        accKeyArr =     accKeyArr.concat(minerArr);
-//	console.log(accKeyArr);
+            accKeyArr = accKeyArr.concat(minerArr);
         }
     }
     console.log(accKeyArr);
@@ -123,7 +124,7 @@ var getWithdrawVestingRoute = function() {
     //should be using rpc call get_account to verify account names
     for (i = 0; i < minerAccountArray.length; i++) {
         reqArr.unshift(minerAccountArray[i]);
-        client.request('set_withdraw_vesting_route', reqArr, function(err, response) {
+        client.request('set_withdraw_vesting_route', reqArr, getWithdrawVestingRouteID, function(err, response) {
             if (err) {
                 console.log('An error with set_withdraw_vesting_route has occured');
                 throw err;
@@ -164,7 +165,7 @@ wif_key: the WIF Private Key to import (type: string)
 var importMinerPrivateKeys = function() {
     //take keys from minerKeyArray and import them via loop
     for (var key in minerKeyArray) {
-        client.request('import_key', [minerKeyArray[key]], function(err, response) {
+        client.request('import_key', [minerKeyArray[key]], importMinerPrivateKeysID, function(err, response) {
             if (err) {
                 console.log("An error has occured with import_key");
                 throw err;
@@ -207,7 +208,7 @@ var unlockWallet = function() {
                 throw err;
             }
             console.log(result.password);
-            client.request('unlock', [result.password], function(err, response) {
+            client.request('unlock', [result.password], unlockWalletID, function(err, response) {
                 if (err) {
                     console.log("An error with unlock has occured");
                     throw err;
@@ -230,7 +231,7 @@ true if the wallet is locked
 */
 var isLocked = function() {
     //use for checking if wallet is locked before performing any actions
-    client.request('is_locked', [], function(err, response) {
+    client.request('is_locked', [], isLockedID, function(err, response) {
         if (err) {
             console.log("An error with is_locked has occured: SHOULD NOT HAPPEN EVER");
             throw err;
@@ -243,3 +244,7 @@ var isLocked = function() {
 //getWithdrawVestingRoute();
 //Some function for importing all of the miner keys and accounts into cli_wallet, then locking them via user password
 //then we will be able to use getWithdrawVestingRoute()
+
+var modifyMinerandWitnesses = function(){
+
+};
