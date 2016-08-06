@@ -87,7 +87,7 @@ auto_vest: Set to true if the from account should receive the VESTS as
 VESTS, or false if it should receive them as STEEM. (type: bool)
 broadcast: true if you wish to broadcast the transaction. (type: bool)
 */
-var getWithdrawVestingRoute = function() {
+var getWithdrawVestingRoute = function(callback) {
     //fill in required miner arrays
     var reqArr = [];
     //prompt the user for their destination wallet and the percentile
@@ -137,9 +137,10 @@ var getWithdrawVestingRoute = function() {
         }
         console.log('Errors', errors);
         console.log('successes', successes);
+        callback();
     });
 };
-/*
+/*      
 gethelp import_key
 
 Imports a WIF Private Key into the wallet to be used to sign transactions
@@ -150,7 +151,7 @@ example: import_key 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
 Parameters:
 wif_key: the WIF Private Key to import (type: string)
 */
-var importMinerPrivateKeys = function() {
+var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
     var batch = [];
     for (var key in minerKeyArray) {
@@ -163,6 +164,7 @@ var importMinerPrivateKeys = function() {
         }
         console.log('Errors', errors);
         console.log('successes', successes);
+        callback();
     });
 };
 
@@ -177,7 +179,7 @@ Parameters:
 password: the password previously set with 'set_password()' (type:
 string)
 */
-var unlockWallet = function(locked) {
+var unlockWallet = function(locked, callback) {
     //call is_locked, then if it is locked prompt user for password
     if (!locked) return;
     var schema = {
@@ -204,6 +206,7 @@ var unlockWallet = function(locked) {
                 throw err;
             }
             console.log("Unlock result: " + response.result);
+            callback();
         });
     });
 };
@@ -216,7 +219,7 @@ Sets a new password on the wallet.
 The wallet must be either 'new' or 'unlocked' to execute this command.
 
 */
-var setWalletPass = function(isNew) {
+var setWalletPass = function(isNew, callback) {
     //prompt user for a password and verify it
     //need to check state of the wallet, if it is new or not first
     //before we prompt the user to set a password
@@ -259,6 +262,7 @@ var setWalletPass = function(isNew) {
                         throw err;
                     }
                     console.log("set_password result: " + response.result);
+                    callback();
                 });
             }
         });
