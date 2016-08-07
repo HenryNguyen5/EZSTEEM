@@ -14,7 +14,8 @@ var rpcIDs = {
     isNewID: 6
 };
 //create a client to interact with cli_wallet
-var client = jayson.client.http('http://127.0.0.1:8090');
+//MAKE SURE YOU SPAWN CLI_WALLET WITH -r
+var client = jayson.client.http('http://127.0.0.1:8091');
 var minerAccountArray = [];
 var minerKeyArray = [];
 var steemConf = "";
@@ -126,7 +127,7 @@ var getWithdrawVestingRoute = function(callback) {
     var batch = [];
     for (i = 0; i < minerAccountArray.length; i++) {
         reqArr.unshift(minerAccountArray[i]);
-        batch.push(client.request('set_withdraw_vesting_route', reqArr, getWithdrawVestingRouteID + i));
+        batch.push(client.request('set_withdraw_vesting_route', reqArr, rpcIDs.getWithdrawVestingRouteID + i));
         reqArr.shift();
     }
 
@@ -140,7 +141,7 @@ var getWithdrawVestingRoute = function(callback) {
         callback();
     });
 };
-/*      
+/*
 gethelp import_key
 
 Imports a WIF Private Key into the wallet to be used to sign transactions
@@ -155,7 +156,7 @@ var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
     var batch = [];
     for (var key in minerKeyArray) {
-        batch.push(client.request('import_key', [minerKeyArray[key]], importMinerPrivateKeysID + key));
+        batch.push(client.request('import_key', [minerKeyArray[key]], rpcIDs.importMinerPrivateKeysID + key));
     }
     client.request(batch, function(err, errors, successes) {
         if (err) {
@@ -200,7 +201,7 @@ var unlockWallet = function(locked, callback) {
             throw err;
         }
         console.log(result.password);
-        client.request('unlock', [result.password], unlockWalletID, function(err, response) {
+        client.request('unlock', [result.password], rpcIDs.unlockWalletID, function(err, response) {
             if (err) {
                 console.log("An error with unlock has occured");
                 throw err;
@@ -256,7 +257,7 @@ var setWalletPass = function(isNew, callback) {
                 console.log("Passwords do not match");
             } else {
                 passGood = true;
-                client.request('set_password', [result.password], setWalletPassID, function(err, response) {
+                client.request('set_password', [result.password], rpcIDs.etWalletPassID, function(err, response) {
                     if (err) {
                         console.log("An error with set_password has occured");
                         throw err;
@@ -280,7 +281,7 @@ true if the wallet is locked
 */
 var isLocked = function(callback) {
     //use for checking if wallet is locked before performing any actions
-    client.request('is_locked', [], isLockedID, function(err, response) {
+    client.request('is_locked', [], rpcIDs.isLockedID, function(err, response) {
         if (err) {
             console.log("An error with is_locked has occured: SHOULD NOT HAPPEN");
             throw err;
@@ -291,7 +292,7 @@ var isLocked = function(callback) {
 };
 
 var isNew = function(callback) {
-    client.request('is_new', [], isNewID, function(err, response) {
+    client.request('is_new', [], rpcIDs.isNewID, function(err, response) {
         if (err) {
             console.log("An error with is_new has occured: SHOULD NOT HAPPEN");
             throw err;
