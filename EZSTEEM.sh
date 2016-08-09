@@ -24,9 +24,10 @@ then
    sudo -s bash -c "echo myBaseDir=\"$myNewBaseDir\" >> $myConfig"
    #if it is not, then this is likely the first time running.
    #Change Ownership of the Base Directory
+   myBaseDir="$myNewBaseDir"
    echo "Changing ownership of base directory"
    sudo -s chown -R $USER $myBaseDir
-
+   
 else
    #if it exists, set it to the directory where EZSTEEM.sh is being run from
    #check to see if they are the same
