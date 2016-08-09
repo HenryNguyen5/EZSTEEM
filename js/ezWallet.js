@@ -32,7 +32,7 @@ var getSteemConfFile = function(callback) {
         }
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
-            if (lines[line].match("/myConfigFile/")) {
+            if (lines[line].match("myConfigFile")) {
                 steemConf = lines[line].split('=')[1];
             }
         }
