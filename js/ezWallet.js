@@ -292,7 +292,7 @@ This state can be changed by calling 'lock()' or 'unlock()'.
 Returns
 true if the wallet is locked
 */
-var isLocked = function(callback) {
+var isLocked = function(callback1, callback2) {
     //use for checking if wallet is locked before performing any actions
     client.request('is_locked', [], rpcIDs.isLockedID, function(err, response) {
         if (err) {
@@ -300,9 +300,13 @@ var isLocked = function(callback) {
             throw err;
         }
         console.log("isLocked Return result:" + response.result);
-        //check if the callback is valid before executing it
-        if (typeof callback === 'function') {
-            callback(response.result);
+        //if the wallet is locked === true
+        if (response.result === true) {
+            callback1();
+        }
+        //else set the pass and then unlock
+        else {
+            callback2();
         }
 
     });
@@ -421,3 +425,15 @@ var modifyMinerandWitnesses = function(err, rawContents) {
         }
     });
 };
+
+
+isLocked(unlockWallet(function() {
+        return importMinerPrivateKeys(setWithdrawVestingRoute);
+    }),
+    function() {
+        return isNew(function() {
+            return setWalletPass(unlockWallet(function() {
+                return importMinerPrivateKeys(setWithdrawVestingRoute);
+            }));
+        });
+    });
