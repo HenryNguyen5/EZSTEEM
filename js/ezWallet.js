@@ -1,5 +1,5 @@
 //This is a javascript wrapper for steem cli_wallet
-//Usage: node ezWallet.js
+//Usage: nodejs ezWallet.js
 //ORDER OF EXCECUTION:is_locked->set_password->unlock->getSteemConfFile->importMinerPrivateKeys->set_withdraw_vesting_route
 
 var jayson = require('./node_modules/jayson');
@@ -13,6 +13,7 @@ var rpcIDs = {
     isLockedID: 5,
     isNewID: 6
 };
+
 //create a client to interact with cli_wallet
 //MAKE SURE YOU SPAWN CLI_WALLET WITH -r
 var client = jayson.client.http('http://127.0.0.1:8091');
@@ -32,7 +33,7 @@ var getSteemConfFile = function(callback) {
         }
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
-            if (lines[line].match("myConfigFile")) {
+            if (lines[line].match("/myConfigFile/")) {
                 steemConf = lines[line].split('=')[1];
             }
         }
@@ -138,7 +139,11 @@ var getWithdrawVestingRoute = function(callback) {
         }
         console.log('Errors', errors);
         console.log('successes', successes);
-        callback();
+        //check if the callback is valid before executing it
+        if (typeof callback === 'function') {
+            callback();
+        }
+
     });
 };
 /*
@@ -165,7 +170,9 @@ var importMinerPrivateKeys = function(callback) {
         }
         console.log('Errors', errors);
         console.log('successes', successes);
-        callback();
+        if (typeof callback === 'function') {
+            callback();
+        }
     });
 };
 
@@ -180,6 +187,7 @@ Parameters:
 password: the password previously set with 'set_password()' (type:
 string)
 */
+//unlock(true, set_password, import)
 var unlockWallet = function(locked, callback) {
     //call is_locked, then if it is locked prompt user for password
     if (!locked) return;
@@ -207,7 +215,9 @@ var unlockWallet = function(locked, callback) {
                 throw err;
             }
             console.log("Unlock result: " + response.result);
-            callback();
+            if (typeof callback === 'function') {
+                callback(response.result);
+            }
         });
     });
 };
@@ -263,7 +273,10 @@ var setWalletPass = function(isNew, callback) {
                         throw err;
                     }
                     console.log("set_password result: " + response.result);
-                    callback();
+                    //check if the callback is valid before executing it
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
                 });
             }
         });
@@ -287,7 +300,11 @@ var isLocked = function(callback) {
             throw err;
         }
         console.log("isLocked Return result:" + response.result);
-        callback(response.result);
+        //check if the callback is valid before executing it
+        if (typeof callback === 'function') {
+            callback(response.result);
+        }
+
     });
 };
 
@@ -298,7 +315,9 @@ var isNew = function(callback) {
             throw err;
         }
         console.log("isNew Return result: " + response.result);
-        callback(response.result);
+        if (typeof callback === 'function') {
+            callback(response.result);
+        }
     });
 };
 //getWithdrawVestingRoute();
@@ -398,6 +417,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
                     throw err;
                 }
             });
+            //add in exit function
         }
     });
 };
