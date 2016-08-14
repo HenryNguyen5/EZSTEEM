@@ -329,7 +329,7 @@ getSteemConfFile(modifyMinerandWitnesses);
 var modifyMinerandWitnesses = function(err, rawContents) {
     console.log("Here are your current accounts and their corrsponding keys: ");
     for (i = 0; i < minerAccountArray.length; i++) {
-        console.log("Account " + i + ": " + minerAccountArray + ", Key " + i + ": " + minerKeyArray);
+        console.log("Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
     }
     var actionSchema = {
         properties: {
