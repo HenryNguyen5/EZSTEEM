@@ -6,7 +6,7 @@ var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
 var fs = require('fs');
 var rpcIDs = {
-    getWithdrawVestingRouteID: 1,
+    setWithdrawVestingRouteID: 1,
     setWalletPassID: 2,
     importMinerPrivateKeysID: 3,
     unlockWalletID: 4,
@@ -89,7 +89,7 @@ auto_vest: Set to true if the from account should receive the VESTS as
 VESTS, or false if it should receive them as STEEM. (type: bool)
 broadcast: true if you wish to broadcast the transaction. (type: bool)
 */
-var getWithdrawVestingRoute = function(callback) {
+var setWithdrawVestingRoute = function(callback) {
     //fill in required miner arrays
     var reqArr = [];
     //prompt the user for their destination wallet and the percentile
@@ -128,7 +128,7 @@ var getWithdrawVestingRoute = function(callback) {
     var batch = [];
     for (i = 0; i < minerAccountArray.length; i++) {
         reqArr.unshift(minerAccountArray[i]);
-        batch.push(client.request('set_withdraw_vesting_route', reqArr, rpcIDs.getWithdrawVestingRouteID + i));
+        batch.push(client.request('set_withdraw_vesting_route', reqArr, rpcIDs.setWithdrawVestingRouteID + i));
         reqArr.shift();
     }
 
@@ -320,9 +320,9 @@ var isNew = function(callback) {
         }
     });
 };
-//getWithdrawVestingRoute();
+//setWithdrawVestingRoute();
 //Some function for importing all of the miner keys and accounts into cli_wallet, then locking them via user password
-//then we will be able to use getWithdrawVestingRoute()
+//then we will be able to use setWithdrawVestingRoute()
 
 //allow user to modify miners, modify witnesses automatically
 getSteemConfFile(modifyMinerandWitnesses);

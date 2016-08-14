@@ -1,0 +1,22 @@
+//mockup menu
+1) View or modify your miner entries
+2) Transfer your mined SteemPower to a main account
+    NOTE: This will transfer the same percentage of SteemPower
+      from every single one of your miners to your main account!
+
+
+      Implementation
+1) Call getSteemConfFile(modifyMinerandWitnesses);
+2) Call getSteemConfFile
+  //check if wallet is locked or NOT
+  //if locked then prompt user to unlock
+  //else check if the wallet is new or NOT
+  //if wallet is new then prompt user to set a password
+  //else continue to next statement
+  isLocked(unlockWallet,isNew(setWalletPass));
+  //then wait for callback...
+  //then import the required keys... TODO may need a check if the keys are already imported
+  //then prompt user to send 1-100% of their steempower as steem to a single main account
+  //then parse through each miner account(will be listed in config.ini)
+  //and send the requested percentage to their main account
+  importMinerPrivateKeys(setWithdrawVestingRoute);
