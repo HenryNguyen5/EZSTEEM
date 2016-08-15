@@ -21,9 +21,11 @@ var minerAccountArray = [];
 var minerKeyArray = [];
 var steemConf = "";
 
+module.exports = {
+
 //get the config dir from ezsteem conf
 //then read the config file and call required callback
-exports.getSteemConfFile = function(callback) {
+getSteemConfFile: function(callback) {
     var EZSTEEMDir = '/etc/ezsteem.conf';
     //grab config file location from ezsteem.conf
     fs.readFile(EZSTEEMDir, 'utf8', function(err, rawContents) {
@@ -39,10 +41,10 @@ exports.getSteemConfFile = function(callback) {
         }
         return fs.readFile(steemConf, 'utf8', callback);
     });
-};
+},
 
 //fill in the miners names and keys
-exports.getMinerInfo = function(err, rawContents) {
+getMinerInfo: function(err, rawContents) {
     if (err) {
         console.log("An error has occured with getMinerInfo");
         throw err;
@@ -66,7 +68,7 @@ exports.getMinerInfo = function(err, rawContents) {
             minerKeyArray.push(accKeyArr[i]);
         }
     }
-};
+},
 
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
@@ -84,7 +86,7 @@ auto_vest: Set to true if the from account should receive the VESTS as
 VESTS, or false if it should receive them as STEEM. (type: bool)
 broadcast: true if you wish to broadcast the transaction. (type: bool)
 */
-var setWithdrawVestingRoute = function(callback) {
+setWithdrawVestingRoute: function(callback) {
     //fill in required miner arrays
     var reqArr = [];
     //prompt the user for their destination wallet and the percentile
@@ -140,7 +142,7 @@ var setWithdrawVestingRoute = function(callback) {
         }
 
     });
-};
+},
 /*
 gethelp import_key
 
@@ -152,7 +154,7 @@ example: import_key 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
 Parameters:
 wif_key: the WIF Private Key to import (type: string)
 */
-var importMinerPrivateKeys = function(callback) {
+importMinerPrivateKeys: function(callback) {
     //take keys from minerKeyArray and import them via loop
     var batch = [];
     for (var key in minerKeyArray) {
@@ -169,7 +171,7 @@ var importMinerPrivateKeys = function(callback) {
             callback();
         }
     });
-};
+},
 
 /*
 gethelp unlock
@@ -183,7 +185,7 @@ password: the password previously set with 'set_password()' (type:
 string)
 */
 //unlock(true, set_password, import)
-var unlockWallet = function(locked, callback) {
+unlockWallet: function(locked, callback) {
     //call is_locked, then if it is locked prompt user for password
     if (!locked) return;
     var schema = {
@@ -215,7 +217,7 @@ var unlockWallet = function(locked, callback) {
             }
         });
     });
-};
+},
 
 /*
 gethelp set_password
@@ -225,7 +227,7 @@ Sets a new password on the wallet.
 The wallet must be either 'new' or 'unlocked' to execute this command.
 
 */
-var setWalletPass = function(isNew, callback) {
+setWalletPass: function(isNew, callback) {
     //prompt user for a password and verify it
     //need to check state of the wallet, if it is new or not first
     //before we prompt the user to set a password
@@ -276,7 +278,7 @@ var setWalletPass = function(isNew, callback) {
             }
         });
     }
-};
+},
 
 /*gethelp is_locked
 
@@ -287,7 +289,7 @@ This state can be changed by calling 'lock()' or 'unlock()'.
 Returns
 true if the wallet is locked
 */
-var isLocked = function(callback1, callback2) {
+isLocked: function(callback1, callback2) {
     //use for checking if wallet is locked before performing any actions
     client.request('is_locked', [], rpcIDs.isLockedID, function(err, response) {
         if (err) {
@@ -305,9 +307,9 @@ var isLocked = function(callback1, callback2) {
         }
 
     });
-};
+},
 
-var isNew = function(callback) {
+isNew: function(callback) {
     client.request('is_new', [], rpcIDs.isNewID, function(err, response) {
         if (err) {
             console.log("An error with is_new has occured: SHOULD NOT HAPPEN");
@@ -318,14 +320,14 @@ var isNew = function(callback) {
             callback(response.result);
         }
     });
-};
+},
 //setWithdrawVestingRoute();
 //Some function for importing all of the miner keys and accounts into cli_wallet, then locking them via user password
 //then we will be able to use setWithdrawVestingRoute()
 
 //allow user to modify miners, modify witnesses automatically
 
-exports.modifyMinerandWitnesses = function(err, rawContents) {
+modifyMinerandWitnesses: function(err, rawContents) {
     console.log("Here are your current accounts and their corrsponding keys: ");
     for (i = 0; i < minerAccountArray.length; i++) {
         console.log("Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
@@ -335,6 +337,7 @@ exports.modifyMinerandWitnesses = function(err, rawContents) {
             actionChoice: {
                 description: 'Would you like to: \n 1) Add \n 2) Remove \n 0) Exit \n An account? ',
                 pattern: /([0-2])/,
+		type: 'integer',
                 required: true
             },
             //need to perform additional checks on addAcc
@@ -343,7 +346,7 @@ exports.modifyMinerandWitnesses = function(err, rawContents) {
                 type: 'string',
                 ask: function() {
                     //only ask for account name if '1' was selected
-                    return prompt.history('actionChoice').value === '1';
+                    return prompt.history('actionChoice').value === 1;
                 },
                 required: true
             },
@@ -353,7 +356,7 @@ exports.modifyMinerandWitnesses = function(err, rawContents) {
                 type: 'string',
                 ask: function() {
                     //only ask for account key if '1' was selected
-                    return prompt.history('actionChoice').value === '1';
+                    return prompt.history('actionChoice').value === 1;
                 },
                 required: true
             },
@@ -362,7 +365,7 @@ exports.modifyMinerandWitnesses = function(err, rawContents) {
                 type: 'integer',
                 ask: function() {
                     //only ask for account removal if '2' was selected
-                    return prompt.history('actionChoice').value === '2';
+                    return prompt.history('actionChoice').value === 2;
                 },
                 required: true
             },
@@ -370,12 +373,11 @@ exports.modifyMinerandWitnesses = function(err, rawContents) {
     };
     prompt.start();
     prompt.get(actionSchema, function(err, result) {
-        //user has selected to exit
-        if (result.actionChoice === '0') return;
+	//user has selected to exit
+        if (result.actionChoice === 0) return;
         var lines = rawContents.split(/\n/);
-
         //user has selected to add an entry
-        if (result.actionChoice === '1') {
+        if (result.actionChoice === 1) {
             //parse through the array and find the start of witnesses or miners in config
             for (var line in lines) {
                 if (lines[line].match(/^# witness =/)) {
@@ -419,8 +421,9 @@ exports.modifyMinerandWitnesses = function(err, rawContents) {
             //add in exit function
         }
     });
-};
+},
 
+}
 //exports.getSteemConfFile(getMinerInfo);
 //exports.getSteemConfFile(modifyMinerandWitnesses);
 /*

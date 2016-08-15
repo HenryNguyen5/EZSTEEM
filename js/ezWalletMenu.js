@@ -14,24 +14,24 @@ var runMenu = function() {
 					     "from every single one of your miners to your main account!\n" +
 					     "0) Exit",
 				pattern: /([0-2])/,
+				type: 'integer',
 				required: true
 			}
 		}
 	}
+	ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
+//TODO loop the prompt somehow
+		prompt.start();
+		prompt.get(schema, function(err, result) {
+			if (result.choice === 0) process.exit();
+			if (result.choice === 1) {
+				ezWallet.getSteemConfFile(ezWallet.modifyMinerandWitnesses);
+			}
+			if (result.choice === 2) {
+				// Awaiting finishes to ezWallet.js
+			};
+		});
 
-	prompt.start();
-	prompt.get(schema, function(err, result) {
-		if (result.choice === '1') {
-			ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
-			ezWallet.getSteemConfFile(ezWallet.modifyMinerandWitnesses);
-		}
-		if (result.choice === '2') {
-			//awaiting finishes to ezWallet.js
-		}
-		else {
-			return;
-		}
-	});
 }
 
 runMenu();
