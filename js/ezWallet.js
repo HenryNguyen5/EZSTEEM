@@ -23,7 +23,7 @@ var steemConf = "";
 
 //get the config dir from ezsteem conf
 //then read the config file and call required callback
-var getSteemConfFile = function(callback) {
+exports.getSteemConfFile = function(callback) {
     var EZSTEEMDir = '/etc/ezsteem.conf';
     //grab config file location from ezsteem.conf
     fs.readFile(EZSTEEMDir, 'utf8', function(err, rawContents) {
@@ -37,13 +37,12 @@ var getSteemConfFile = function(callback) {
                 steemConf = lines[line].split('=')[1];
             }
         }
-        console.log("steemconf:" + steemConf);
         return fs.readFile(steemConf, 'utf8', callback);
     });
 };
 
 //fill in the miners names and keys
-var getMinerInfo = function(err, rawContents) {
+exports.getMinerInfo = function(err, rawContents) {
     if (err) {
         console.log("An error has occured with getMinerInfo");
         throw err;
@@ -67,8 +66,6 @@ var getMinerInfo = function(err, rawContents) {
             minerKeyArray.push(accKeyArr[i]);
         }
     }
-    console.log(minerAccountArray);
-    console.log(minerKeyArray);
 };
 
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
@@ -328,7 +325,7 @@ var isNew = function(callback) {
 
 //allow user to modify miners, modify witnesses automatically
 
-var modifyMinerandWitnesses = function(err, rawContents) {
+exports.modifyMinerandWitnesses = function(err, rawContents) {
     console.log("Here are your current accounts and their corrsponding keys: ");
     for (i = 0; i < minerAccountArray.length; i++) {
         console.log("Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
@@ -424,8 +421,8 @@ var modifyMinerandWitnesses = function(err, rawContents) {
     });
 };
 
-getSteemConfFile(getMinerInfo);
-getSteemConfFile(modifyMinerandWitnesses);
+//exports.getSteemConfFile(getMinerInfo);
+//exports.getSteemConfFile(modifyMinerandWitnesses);
 /*
 isLocked(unlockWallet(function() {
         return importMinerPrivateKeys(setWithdrawVestingRoute);
