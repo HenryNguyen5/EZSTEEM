@@ -33,7 +33,7 @@ var getSteemConfFile = function(callback) {
         }
         var lines = rawContents.split(/\n/);
         for (var line in lines) {
-            if (lines[line].match("/myConfigFile/")) {
+            if (lines[line].match(/myConfigFile/)) {
                 steemConf = lines[line].split('=')[1];
             }
         }
@@ -41,7 +41,7 @@ var getSteemConfFile = function(callback) {
         return fs.readFile(steemConf, 'utf8', callback);
     });
 };
-getSteemConfFile(getMinerInfo);
+
 //fill in the miners names and keys
 var getMinerInfo = function(err, rawContents) {
     if (err) {
@@ -72,7 +72,7 @@ var getMinerInfo = function(err, rawContents) {
     console.log(minerKeyArray);
 };
 
-
+getSteemConfFile(getMinerInfo);
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
 
@@ -329,7 +329,7 @@ var isNew = function(callback) {
 //then we will be able to use setWithdrawVestingRoute()
 
 //allow user to modify miners, modify witnesses automatically
-getSteemConfFile(modifyMinerandWitnesses);
+
 var modifyMinerandWitnesses = function(err, rawContents) {
     console.log("Here are your current accounts and their corrsponding keys: ");
     for (i = 0; i < minerAccountArray.length; i++) {
@@ -426,7 +426,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
     });
 };
 
-
+/*
 isLocked(unlockWallet(function() {
         return importMinerPrivateKeys(setWithdrawVestingRoute);
     }),
@@ -436,4 +436,4 @@ isLocked(unlockWallet(function() {
                 return importMinerPrivateKeys(setWithdrawVestingRoute);
             }));
         });
-    });
+    });*/
