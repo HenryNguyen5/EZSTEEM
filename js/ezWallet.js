@@ -59,7 +59,6 @@ var getMinerInfo = function(err, rawContents) {
             accKeyArr = accKeyArr.concat(minerArr);
         }
     }
-    console.log(accKeyArr);
     //Seperate NAME and KEY into their respective arrays, minerAccountArray and minerKeyArray
     for (i = 0; i < accKeyArr.length; i++) {
         if (i % 2 === 0) {
@@ -72,7 +71,6 @@ var getMinerInfo = function(err, rawContents) {
     console.log(minerKeyArray);
 };
 
-getSteemConfFile(getMinerInfo);
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
 
@@ -348,7 +346,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
                 type: 'string',
                 ask: function() {
                     //only ask for account name if '1' was selected
-                    return prompt.history('actionChoice').value === 1;
+                    return prompt.history('actionChoice').value === '1';
                 },
                 required: true
             },
@@ -358,7 +356,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
                 type: 'string',
                 ask: function() {
                     //only ask for account key if '1' was selected
-                    return prompt.history('actionChoice').value === 1;
+                    return prompt.history('actionChoice').value === '1';
                 },
                 required: true
             },
@@ -367,7 +365,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
                 type: 'integer',
                 ask: function() {
                     //only ask for account removal if '2' was selected
-                    return prompt.history('actionChoice').value === 2;
+                    return prompt.history('actionChoice').value === '2';
                 },
                 required: true
             },
@@ -376,21 +374,21 @@ var modifyMinerandWitnesses = function(err, rawContents) {
     prompt.start();
     prompt.get(actionSchema, function(err, result) {
         //user has selected to exit
-        if (result.actionChoice === 0) return;
+        if (result.actionChoice === '0') return;
         var lines = rawContents.split(/\n/);
 
         //user has selected to add an entry
-        if (result.actionChoice === 1) {
+        if (result.actionChoice === '1') {
             //parse through the array and find the start of witnesses or miners in config
             for (var line in lines) {
-                if (lines[line].match(/^# witness = /)) {
+                if (lines[line].match(/^# witness =/)) {
                     //add to the witnesses one line ahead of #witness
-                    lines.splice(line + 1, 0, 'witness = ' + result.addAcc);
+                    lines.splice(parseInt(line) + 1, 0, 'witness = ' + result.addAcc);
                 }
-                if (lines[line].match(/^# miner = /)) {
+                if (lines[line].match(/^# miner =/)) {
                     //add to the miners one line ahead of #miners
-                    var accArr = ["\"" + result.addAcc + "\",\"" + result.addKey + "\""];
-                    lines.splice(line + 1, 0, "miner = " + accArr);
+                    var accArr = ["[\"" + result.addAcc + "\",\"" + result.addKey + "\"]"];
+                    lines.splice(parseInt(line) + 1, 0, "miner = " +  accArr);
                 }
             }
             //join the entire array into a string, replacing each seperator with \n
@@ -426,6 +424,8 @@ var modifyMinerandWitnesses = function(err, rawContents) {
     });
 };
 
+getSteemConfFile(getMinerInfo);
+getSteemConfFile(modifyMinerandWitnesses);
 /*
 isLocked(unlockWallet(function() {
         return importMinerPrivateKeys(setWithdrawVestingRoute);
