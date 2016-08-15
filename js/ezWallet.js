@@ -21,11 +21,9 @@ var minerAccountArray = [];
 var minerKeyArray = [];
 var steemConf = "";
 
-module.exports = {
-
 //get the config dir from ezsteem conf
 //then read the config file and call required callback
-getSteemConfFile: function(callback) {
+var getSteemConfFile = function(callback) {
     var EZSTEEMDir = '/etc/ezsteem.conf';
     //grab config file location from ezsteem.conf
     fs.readFile(EZSTEEMDir, 'utf8', function(err, rawContents) {
@@ -41,10 +39,10 @@ getSteemConfFile: function(callback) {
         }
         return fs.readFile(steemConf, 'utf8', callback);
     });
-},
+};
 
 //fill in the miners names and keys
-getMinerInfo: function(err, rawContents) {
+var getMinerInfo = function(err, rawContents) {
     if (err) {
         console.log("An error has occured with getMinerInfo");
         throw err;
@@ -68,7 +66,7 @@ getMinerInfo: function(err, rawContents) {
             minerKeyArray.push(accKeyArr[i]);
         }
     }
-},
+};
 
 //set_withdraw_vesting_route(from,to,percent,autovests,broadcast)
 /*gethelp set_withdraw_vesting_route
@@ -86,7 +84,7 @@ auto_vest: Set to true if the from account should receive the VESTS as
 VESTS, or false if it should receive them as STEEM. (type: bool)
 broadcast: true if you wish to broadcast the transaction. (type: bool)
 */
-setWithdrawVestingRoute: function(callback) {
+var setWithdrawVestingRoute = function(callback) {
     //fill in required miner arrays
     var reqArr = [];
     //prompt the user for their destination wallet and the percentile
@@ -142,7 +140,7 @@ setWithdrawVestingRoute: function(callback) {
         }
 
     });
-},
+};
 /*
 gethelp import_key
 
@@ -154,7 +152,7 @@ example: import_key 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
 Parameters:
 wif_key: the WIF Private Key to import (type: string)
 */
-importMinerPrivateKeys: function(callback) {
+var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
     var batch = [];
     for (var key in minerKeyArray) {
@@ -171,7 +169,7 @@ importMinerPrivateKeys: function(callback) {
             callback();
         }
     });
-},
+};
 
 /*
 gethelp unlock
@@ -185,7 +183,7 @@ password: the password previously set with 'set_password()' (type:
 string)
 */
 //unlock(true, set_password, import)
-unlockWallet: function(locked, callback) {
+var unlockWallet = function(locked, callback) {
     //call is_locked, then if it is locked prompt user for password
     if (!locked) return;
     var schema = {
@@ -217,7 +215,7 @@ unlockWallet: function(locked, callback) {
             }
         });
     });
-},
+};
 
 /*
 gethelp set_password
@@ -227,7 +225,7 @@ Sets a new password on the wallet.
 The wallet must be either 'new' or 'unlocked' to execute this command.
 
 */
-setWalletPass: function(isNew, callback) {
+var setWalletPass = function(isNew, callback) {
     //prompt user for a password and verify it
     //need to check state of the wallet, if it is new or not first
     //before we prompt the user to set a password
@@ -278,7 +276,7 @@ setWalletPass: function(isNew, callback) {
             }
         });
     }
-},
+};
 
 /*gethelp is_locked
 
@@ -289,7 +287,7 @@ This state can be changed by calling 'lock()' or 'unlock()'.
 Returns
 true if the wallet is locked
 */
-isLocked: function(callback1, callback2) {
+var isLocked = function(callback1, callback2) {
     //use for checking if wallet is locked before performing any actions
     client.request('is_locked', [], rpcIDs.isLockedID, function(err, response) {
         if (err) {
@@ -307,9 +305,9 @@ isLocked: function(callback1, callback2) {
         }
 
     });
-},
+};
 
-isNew: function(callback) {
+var isNew = function(callback) {
     client.request('is_new', [], rpcIDs.isNewID, function(err, response) {
         if (err) {
             console.log("An error with is_new has occured: SHOULD NOT HAPPEN");
@@ -320,14 +318,14 @@ isNew: function(callback) {
             callback(response.result);
         }
     });
-},
+};
 //setWithdrawVestingRoute();
 //Some function for importing all of the miner keys and accounts into cli_wallet, then locking them via user password
 //then we will be able to use setWithdrawVestingRoute()
 
 //allow user to modify miners, modify witnesses automatically
 
-modifyMinerandWitnesses: function(err, rawContents) {
+var modifyMinerandWitnesses = function(err, rawContents) {
     console.log("Here are your current accounts and their corrsponding keys: ");
     for (i = 0; i < minerAccountArray.length; i++) {
         console.log("Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
@@ -421,19 +419,13 @@ modifyMinerandWitnesses: function(err, rawContents) {
             //add in exit function
         }
     });
-},
+};
 
-}
-//exports.getSteemConfFile(getMinerInfo);
-//exports.getSteemConfFile(modifyMinerandWitnesses);
-/*
-isLocked(unlockWallet(function() {
-        return importMinerPrivateKeys(setWithdrawVestingRoute);
-    }),
-    function() {
-        return isNew(function() {
-            return setWalletPass(unlockWallet(function() {
-                return importMinerPrivateKeys(setWithdrawVestingRoute);
-            }));
-        });
-    });*/
+//export object encapsulating the functions required for ezWalletMenu.js
+var exportFuncs = {
+	getSteemConfFile : getSteemConfFile,
+	getMinerInfo : getMinerInfo,
+	modifyMinerandWitnesses : modifyMinerandWitnesses
+};
+
+module.exports = exportFuncs;

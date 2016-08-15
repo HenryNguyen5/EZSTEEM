@@ -1,24 +1,32 @@
 var ezWallet = require("./ezWallet.js");
 var prompt = require("./node_modules/prompt");
 
-console.log("----------\nezWallet\n----------");
+console.log(`
+----------
+ezWallet
+----------
+`);
+
+var desc = `Would you like to:
+1) View or modify your miner entries
+2) Transfar your mined SteemPower to a main account
+	NOTE: This will transfer the same percentage of Steempower
+	      from every single one of your miners to your main account!
+0) Exit`;
 
 var runMenu = function() {
+	//prompt the user
 	var schema = {
 		properties: {
 			choice: {
-				description: "Would you like to:\n" +
-					     "1) View or modify your miner entries\n" +
-				    	     "2) Transfer your mined SteemPower to a main account\n" +
-					     "  NOTE: This will transfer the same percentage of Steempower\n    " +
-					     "from every single one of your miners to your main account!\n" +
-					     "0) Exit",
+				description: desc,
 				pattern: /([0-2])/,
 				type: 'integer',
 				required: true
 			}
 		}
 	}
+	//grab the miner's info from config.ini
 	ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
 //TODO loop the prompt somehow
 		prompt.start();
