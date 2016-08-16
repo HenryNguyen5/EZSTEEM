@@ -75,7 +75,7 @@ sudo -s apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-d
 sudo -s git clone https://github.com/steemit/steem 
 sudo -s chown -R $USER $myBaseDir
 cd steem 
-sudo -s git checkout v0.12.2 
+sudo -s git checkout v0.13.0
 sudo -s git submodule update --init --recursive 
 sudo -s cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . 
 sudo -s make -j "$myCoreCount"
