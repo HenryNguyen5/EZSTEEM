@@ -64,7 +64,7 @@ fi
 
 cd "$myBaseDir/steem"
 sudo -s git fetch
-sudo -s git checkout v0.12.2
+sudo -s git checkout v0.13.0
 sudo -s rm -f CMakeCache.txt
 sudo -s make -s clean > /dev/null
 sudo -s cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON .
