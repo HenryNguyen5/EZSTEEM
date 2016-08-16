@@ -335,7 +335,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
             actionChoice: {
                 description: 'Would you like to: \n 1) Add \n 2) Remove \n 0) Exit \n An account? ',
                 pattern: /([0-2])/,
-		type: 'integer',
+                type: 'integer',
                 required: true
             },
             //need to perform additional checks on addAcc
@@ -371,7 +371,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
     };
     prompt.start();
     prompt.get(actionSchema, function(err, result) {
-	//user has selected to exit
+        //user has selected to exit
         if (result.actionChoice === 0) return;
         var lines = rawContents.split(/\n/);
         //user has selected to add an entry
@@ -380,12 +380,12 @@ var modifyMinerandWitnesses = function(err, rawContents) {
             for (var line in lines) {
                 if (lines[line].match(/^# witness =/)) {
                     //add to the witnesses one line ahead of #witness
-                    lines.splice(parseInt(line) + 1, 0, 'witness = ' + result.addAcc);
+                    lines.splice(parseInt(line) + 1, 0, `witness = \"${result.addAcc}\"`);
                 }
                 if (lines[line].match(/^# miner =/)) {
                     //add to the miners one line ahead of #miners
                     var accArr = ["[\"" + result.addAcc + "\",\"" + result.addKey + "\"]"];
-                    lines.splice(parseInt(line) + 1, 0, "miner = " +  accArr);
+                    lines.splice(parseInt(line) + 1, 0, "miner = " + accArr);
                 }
             }
             //join the entire array into a string, replacing each seperator with \n
@@ -423,9 +423,9 @@ var modifyMinerandWitnesses = function(err, rawContents) {
 
 //export object encapsulating the functions required for ezWalletMenu.js
 var exportFuncs = {
-	getSteemConfFile : getSteemConfFile,
-	getMinerInfo : getMinerInfo,
-	modifyMinerandWitnesses : modifyMinerandWitnesses
+    getSteemConfFile: getSteemConfFile,
+    getMinerInfo: getMinerInfo,
+    modifyMinerandWitnesses: modifyMinerandWitnesses
 };
 
 module.exports = exportFuncs;
