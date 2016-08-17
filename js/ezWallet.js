@@ -262,7 +262,7 @@ var setWalletPass = function(isNew, callback) {
                 console.log("Passwords do not match");
             } else {
                 passGood = true;
-                client.request('set_password', [result.password], rpcIDs.etWalletPassID, function(err, response) {
+                client.request('set_password', [result.password], rpcIDs.setWalletPassID, function(err, response) {
                     if (err) {
                         console.log("An error with set_password has occured");
                         throw err;
