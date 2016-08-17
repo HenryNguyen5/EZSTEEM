@@ -421,11 +421,31 @@ var modifyMinerandWitnesses = function(err, rawContents) {
     });
 };
 
+var autowithdraw = function() {
+    isLocked(
+        function() {
+            return (unlockWallet(function() {
+                return importMinerPrivateKeys(setWithdrawVestingRoute);
+            }));
+        },
+        function() {
+            return isNew(function(newBool) {
+                return setWalletPass(newBool, function() {
+                    return unlockWallet(function() {
+                        return importMinerPrivateKeys(setWithdrawVestingRoute);
+                    });
+                });
+            });
+        }
+    );
+};
+
 //export object encapsulating the functions required for ezWalletMenu.js
 var exportFuncs = {
     getSteemConfFile: getSteemConfFile,
     getMinerInfo: getMinerInfo,
-    modifyMinerandWitnesses: modifyMinerandWitnesses
+    modifyMinerandWitnesses: modifyMinerandWitnesses,
+    autowithdraw : autowithdraw
 };
 
 module.exports = exportFuncs;

@@ -15,31 +15,31 @@ var desc = `Would you like to:
 0) Exit`;
 
 var runMenu = function() {
-	//prompt the user
-	var schema = {
-		properties: {
-			choice: {
-				description: desc,
-				pattern: /([0-2])/,
-				type: 'integer',
-				required: true
-			}
-		}
-	}
-	//grab the miner's info from config.ini
-	ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
-//TODO loop the prompt somehow
-		prompt.start();
-		prompt.get(schema, function(err, result) {
-			if (result.choice === 0) process.exit();
-			if (result.choice === 1) {
-				ezWallet.getSteemConfFile(ezWallet.modifyMinerandWitnesses);
-			}
-			if (result.choice === 2) {
-				// Awaiting finishes to ezWallet.js
-			};
-		});
+    //prompt the user
+    var schema = {
+        properties: {
+            choice: {
+                description: desc,
+                pattern: /([0-2])/,
+                type: 'integer',
+                required: true
+            }
+        }
+    };
+    //grab the miner's info from config.ini
+    ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
+    //TODO loop the prompt somehow
+    prompt.start();
+    prompt.get(schema, function(err, result) {
+        if (result.choice === 0) process.exit();
+        if (result.choice === 1) {
+            ezWallet.getSteemConfFile(ezWallet.modifyMinerandWitnesses);
+        }
+        if (result.choice === 2) {
+            ezWallet.autowithdraw();
+        }
+    });
 
-}
+};
 
 runMenu();
