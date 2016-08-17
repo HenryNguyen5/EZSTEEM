@@ -1,5 +1,6 @@
 var ezWallet = require("./ezWallet.js");
 var prompt = require("./node_modules/prompt");
+var helper = require("./helper.js");
 
 console.log(`
 ----------
@@ -27,19 +28,23 @@ var runMenu = function() {
         }
     };
     //grab the miner's info from config.ini
-    ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
-    //TODO loop the prompt somehow
     prompt.start();
-    prompt.get(schema, function(err, result) {
-        if (result.choice === 0) process.exit();
-        if (result.choice === 1) {
-            ezWallet.getSteemConfFile(ezWallet.modifyMinerandWitnesses);
-        }
-        if (result.choice === 2) {
-            ezWallet.autowithdraw();
-        }
-    });
 
+    helper.asyncLoop(-1, function(loop) {
+	ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
+    	prompt.get(schema, function(err, result) {
+            if (result.choice === 0) loop.break();
+            if (result.choice === 1) {
+		ezWallet.getSteemConfFile(function(err, rawContents){
+  		    return ezWallet.modifyMinerandWitnesses(err,rawContents,loop.next);
+	    });
+       	    }
+            if (result.choice === 2) {
+//            	ezWallet.autowithdraw();
+            }
+        })},
+	function () { console.log("end") }
+    );
 };
 
 runMenu();

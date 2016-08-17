@@ -47,6 +47,8 @@ var getMinerInfo = function(err, rawContents) {
         console.log("An error has occured with getMinerInfo");
         throw err;
     }
+    minerAccountArray.length = 0;
+    minerKeyArray.length = 0;
     var accKeyArr = [];
     //split on new lines
     var lines = rawContents.split(/\n/);
@@ -324,7 +326,7 @@ var isNew = function(callback) {
 
 //allow user to modify miners, modify witnesses automatically
 
-var modifyMinerandWitnesses = function(err, rawContents) {
+var modifyMinerandWitnesses = function(err, rawContents, callback) {
     console.log("Here are your current accounts and their corrsponding keys: ");
     for (i = 0; i < minerAccountArray.length; i++) {
         console.log("Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
@@ -394,6 +396,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
                     console.log("An error with modifyMinerandWitnesses has occured");
                     throw err;
                 }
+		callback();
             });
         }
 
@@ -414,6 +417,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
                     console.log("An error with modifyMinerandWitnesses has occured");
                     throw err;
                 }
+		callback();
             });
             //add in exit function
         }
