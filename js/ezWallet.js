@@ -183,9 +183,8 @@ password: the password previously set with 'set_password()' (type:
 string)
 */
 //unlock(true, set_password, import)
-var unlockWallet = function(locked, callback) {
+var unlockWallet = function(callback) {
     //call is_locked, then if it is locked prompt user for password
-    if (!locked) return;
     var schema = {
         properties: {
             password: {
@@ -422,6 +421,7 @@ var modifyMinerandWitnesses = function(err, rawContents) {
 };
 
 var autowithdraw = function() {
+
     isLocked(
         function() {
             return (unlockWallet(function() {
