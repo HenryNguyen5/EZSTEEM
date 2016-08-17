@@ -5,6 +5,7 @@
 var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
 var fs = require('fs');
+var colors = require('colors');
 var rpcIDs = {
     setWithdrawVestingRouteID: 1,
     setWalletPassID: 2,
@@ -327,21 +328,21 @@ var isNew = function(callback) {
 //allow user to modify miners, modify witnesses automatically
 
 var modifyMinerandWitnesses = function(err, rawContents, callback) {
-    console.log("Here are your current accounts and their corrsponding keys: ");
+    console.log("\nHere are your current accounts and their corrsponding keys: ");
     for (i = 0; i < minerAccountArray.length; i++) {
-        console.log("Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
+        console.log("   => Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
     }
     var actionSchema = {
         properties: {
             actionChoice: {
-                description: 'Would you like to: \n 1) Add \n 2) Remove \n 0) Exit \n An account? ',
+                description: '\n Would you like to: \n 1) Add \n 2) Remove \n 0) Exit \n An account?\n'.white,
                 pattern: /([0-2])/,
                 type: 'integer',
                 required: true
             },
             //need to perform additional checks on addAcc
             addAcc: {
-                description: 'Enter the account name you want to add: ',
+                description: '\nEnter the account name you want to add:\n'.white,
                 type: 'string',
                 ask: function() {
                     //only ask for account name if '1' was selected
@@ -351,7 +352,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
             },
             //need to perform additional checks on addkey
             addKey: {
-                description: 'Enter the account private key you want to add: ',
+                description: 'Enter the account private key you want to add:\n'.white,
                 type: 'string',
                 ask: function() {
                     //only ask for account key if '1' was selected
@@ -360,7 +361,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
                 required: true
             },
             remove: {
-                description: 'Enter the account number you want to remove: ',
+                description: '\nEnter the account number you want to remove:\n'.white,
                 type: 'integer',
                 ask: function() {
                     //only ask for account removal if '2' was selected
