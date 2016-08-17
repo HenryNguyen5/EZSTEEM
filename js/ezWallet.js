@@ -252,7 +252,7 @@ var setWalletPass = function(isNew, callback) {
         }
     };
     prompt.start();
-    while (passGood === false) {
+    //while (passGood === false) {
         prompt.get(schema, function(err, result) {
             if (err) {
                 console.log("Password prompt error");
@@ -275,7 +275,7 @@ var setWalletPass = function(isNew, callback) {
                 });
             }
         });
-    }
+  //  }
 };
 
 /*gethelp is_locked
@@ -296,7 +296,7 @@ var isLocked = function(callback1, callback2) {
         }
         console.log("isLocked Return result:" + response.result);
         //if the wallet is locked === true
-        if (response.result === true) {
+        if (response.result === false) {
             callback1();
         }
         //else set the pass and then unlock
