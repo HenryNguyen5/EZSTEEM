@@ -12,7 +12,9 @@ var rpcIDs = {
     importMinerPrivateKeysID: 3,
     unlockWalletID: 4,
     isLockedID: 5,
-    isNewID: 6
+    isNewID: 6,
+    withdrawVestingID: 7,
+    listMyAccountsID: 8
 };
 
 //create a client to interact with cli_wallet
@@ -123,26 +125,22 @@ var setWithdrawVestingRoute = function(callback) {
     //instead of automatically looping through all accounts
     //(or give both options)
     //should be using rpc call get_account to verify account names
-    var batch = [];
     for (i = 0; i < minerAccountArray.length; i++) {
         reqArr.unshift(minerAccountArray[i]);
-        batch.push(client.request('set_withdraw_vesting_route', reqArr, rpcIDs.setWithdrawVestingRouteID + i));
+        client.request('set_withdraw_vesting_route', reqArr, rpcIDs.setWithdrawVestingRouteID + i, function(err, response) {
+            if (err) {
+                console.log('An error with set_withdraw_vesting_route has occured');
+                throw err;
+            }
+            console.log('Response:', response);
+            //check if the callback is valid before executing it
+            if (typeof callback === 'function' && (key === (minerKeyArray.length - 1))) {
+                callback();
+            }
+
+        });
         reqArr.shift();
     }
-
-    client.request(batch, function(err, errors, successes) {
-        if (err) {
-            console.log('An error with set_withdraw_vesting_route has occured');
-            throw err;
-        }
-        console.log('Errors', errors);
-        console.log('successes', successes);
-        //check if the callback is valid before executing it
-        if (typeof callback === 'function') {
-            callback();
-        }
-
-    });
 };
 /*
 gethelp import_key
@@ -157,23 +155,68 @@ wif_key: the WIF Private Key to import (type: string)
 */
 var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
-    var batch = [];
     for (var key in minerKeyArray) {
-        batch.push(client.request('import_key', [minerKeyArray[key]], rpcIDs.importMinerPrivateKeysID + key));
+        client.request(client.request('import_key', [minerKeyArray[key]], rpcIDs.importMinerPrivateKeysID + key), function(err, response) {
+            if (err) {
+                console.log('An error with importMinerPrivateKeys has occured');
+                throw err;
+            }
+            console.log('Response: ', Response);
+            if (typeof callback === 'function' && (key === (minerKeyArray.length - 1))) {
+                callback();
+            }
+        });
     }
-    client.request(batch, function(err, errors, successes) {
+};
+/*
+gethelp withdraw_vesting
+
+Set up a vesting withdraw request. The request is fulfilled once a week
+over the next two year (104 weeks).
+
+Parameters:
+from: The account the VESTS are withdrawn from (type: string)
+vesting_shares: The amount of VESTS to withdraw over the next two
+years. Each week (amount/104) shares are withdrawn and deposited
+back as STEEM. i.e. "10.000000 VESTS" (type: asset)
+broadcast: true if you wish to broadcast the transaction (type: bool)
+*/
+var withdrawVesting = function(callback) {
+    //take keys from minerKeyArray and import them via loop
+    for (var acc in minerAccountArray) {
+      TODO "Prompt user for how many vesting shares they want to power down per account, the amounts can be displayed"
+      TODO "Via listMyAccounts"
+
+        client.request(client.request('withdraw_vesting', [minerAccountArray[acc],TODO"VestingShares", TODO"broadcast"], rpcIDs.withdrawVestingID + acc), function(err, response) {
+            if (err) {
+                console.log('An error with withdrawVesting has occured');
+                throw err;
+            }
+            console.log('Response: ', Response);
+            if (typeof callback === 'function' && (acc === (minerAccountArray.length - 1))) {
+                callback();
+            }
+        });
+    }
+};
+/*
+gethelp list_my_accounts
+
+Gets the account information for all accounts for which this wallet has a
+private key
+*/
+var listMyAccounts = function(callback) {
+    client.request('list_my_accounts', [], rpcIDs.listMyAccountsID, function(err, response) {
         if (err) {
-            console.log('An error with importMinerPrivateKeys has occured');
+            console.log("An error with list_my_accounts has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        console.log('Errors', errors);
-        console.log('successes', successes);
+        console.log("list_my_accounts Return result: " + response.result);
         if (typeof callback === 'function') {
-            callback();
+            callback(response.result);
         }
     });
 };
-
 /*
 gethelp unlock
 
@@ -255,29 +298,29 @@ var setWalletPass = function(isNew, callback) {
     };
     prompt.start();
     //while (passGood === false) {
-        prompt.get(schema, function(err, result) {
-            if (err) {
-                console.log("Password prompt error");
-                throw err;
-            }
-            if (result.password !== result.verify) {
-                console.log("Passwords do not match");
-            } else {
-                passGood = true;
-                client.request('set_password', [result.password], rpcIDs.setWalletPassID, function(err, response) {
-                    if (err) {
-                        console.log("An error with set_password has occured");
-                        throw err;
-                    }
-                    console.log("set_password result: " + response.result);
-                    //check if the callback is valid before executing it
-                    if (typeof callback === 'function') {
-                        callback();
-                    }
-                });
-            }
-        });
-  //  }
+    prompt.get(schema, function(err, result) {
+        if (err) {
+            console.log("Password prompt error");
+            throw err;
+        }
+        if (result.password !== result.verify) {
+            console.log("Passwords do not match");
+        } else {
+            passGood = true;
+            client.request('set_password', [result.password], rpcIDs.setWalletPassID, function(err, response) {
+                if (err) {
+                    console.log("An error with set_password has occured");
+                    throw err;
+                }
+                console.log("set_password result: " + response.result);
+                //check if the callback is valid before executing it
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            });
+        }
+    });
+    //  }
 };
 
 /*gethelp is_locked
@@ -397,7 +440,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
                     console.log("An error with modifyMinerandWitnesses has occured");
                     throw err;
                 }
-		callback();
+                callback();
             });
         }
 
@@ -418,7 +461,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
                     console.log("An error with modifyMinerandWitnesses has occured");
                     throw err;
                 }
-		callback();
+                callback();
             });
             //add in exit function
         }
@@ -450,7 +493,7 @@ var exportFuncs = {
     getSteemConfFile: getSteemConfFile,
     getMinerInfo: getMinerInfo,
     modifyMinerandWitnesses: modifyMinerandWitnesses,
-    autowithdraw : autowithdraw
+    autowithdraw: autowithdraw
 };
 
 module.exports = exportFuncs;
