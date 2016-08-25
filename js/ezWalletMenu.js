@@ -46,7 +46,7 @@ var runMenu = function() {
 	    });
        	    }
             if (result.choice === 2) {
-//            	ezWallet.autowithdraw();
+            	ezWallet.autowithdraw(loop.next);
             }
         })},
 	function () { console.log("end") }

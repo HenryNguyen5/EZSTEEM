@@ -440,7 +440,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
                     console.log("An error with modifyMinerandWitnesses has occured");
                     throw err;
                 }
-                callback();
+                if (typeof(callback) === 'function') callback();
             });
         }
 
@@ -448,8 +448,10 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
         else {
             //parse through the array until we match a line with their selected account name
             //this regex will also match the witness with the same name and remove it too
+            var witness = 'witness = \"' + minerAccountArray[result.remove].toString();
+            var miner = 'miner = \\[\\"' + minerAccountArray[result.remove].toString();
             for (var lineToRemove in lines) {
-                if (lines[lineToRemove].match(minerAccountArray[result.remove])) {
+                if (lines[lineToRemove].match(witness) || lines[lineToRemove].match(miner)) {
                     //instead of actually deleting the entry, we comment it out just incase it was accidental
                     lines[lineToRemove] = "#REMOVED " + lines[lineToRemove];
                 }
@@ -461,26 +463,26 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
                     console.log("An error with modifyMinerandWitnesses has occured");
                     throw err;
                 }
-                callback();
+                if (typeof(callback) === 'function') callback();
             });
             //add in exit function
         }
     });
 };
 
-var autowithdraw = function() {
+var autowithdraw = function(callback) {
 
     isLocked(
         function() {
             return (unlockWallet(function() {
-                return importMinerPrivateKeys(setWithdrawVestingRoute);
+                return importMinerPrivateKeys(setWithdrawVestingRoute(callback));
             }));
         },
         function() {
             return isNew(function(newBool) {
                 return setWalletPass(newBool, function() {
                     return unlockWallet(function() {
-                        return importMinerPrivateKeys(setWithdrawVestingRoute);
+                        return importMinerPrivateKeys(setWithdrawVestingRoute(callback));
                     });
                 });
             });
