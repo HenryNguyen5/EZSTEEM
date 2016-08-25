@@ -184,10 +184,10 @@ broadcast: true if you wish to broadcast the transaction (type: bool)
 var withdrawVesting = function(callback) {
     //take keys from minerKeyArray and import them via loop
     for (var acc in minerAccountArray) {
-      TODO "Prompt user for how many vesting shares they want to power down per account, the amounts can be displayed"
-      TODO "Via listMyAccounts"
+//      TODO "Prompt user for how many vesting shares they want to power down per account, the amounts can be displayed"
+//      TODO "Via listMyAccounts"
 
-        client.request(client.request('withdraw_vesting', [minerAccountArray[acc],TODO"VestingShares", TODO"broadcast"], rpcIDs.withdrawVestingID + acc), function(err, response) {
+        client.request(client.request('withdraw_vesting', [minerAccountArray[acc], 0, true], rpcIDs.withdrawVestingID + acc), function(err, response) {
             if (err) {
                 console.log('An error with withdrawVesting has occured');
                 throw err;
@@ -371,10 +371,12 @@ var isNew = function(callback) {
 //allow user to modify miners, modify witnesses automatically
 
 var modifyMinerandWitnesses = function(err, rawContents, callback) {
-    console.log("\nHere are your current accounts and their corrsponding keys: ");
-    for (i = 0; i < minerAccountArray.length; i++) {
-        console.log("   => Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
-    }
+    if (minerAccountArray.length > 0) {
+	console.log("\nHere are your current accounts and their corrsponding keys: ");
+	for (i = 0; i < minerAccountArray.length; i++) {
+	    console.log("   => Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
+	}
+    } else { console.log("No accounts found"); }
     var actionSchema = {
         properties: {
             actionChoice: {
