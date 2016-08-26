@@ -1,3 +1,4 @@
+/*jshint esversion: 6*/
 var ezWallet = require("./ezWallet.js");
 var prompt = require("./node_modules/prompt");
 var helper = require("./helper.js");
@@ -13,9 +14,7 @@ console.log(`
 var desc = `\n What would you like to do today?
 
  1)  View or modify your miner entries
- 2)  Transfar your mined SteemPower to a main account
-	NOTE: This will transfer the same percentage of Steempower
-	    from every single one of your miners to your main account!
+ 2)  Transfer your miner's SteemPower to a single account
  0)  Exit
 
 `.white;
@@ -37,19 +36,22 @@ var runMenu = function() {
     prompt.start();
 
     helper.asyncLoop(-1, function(loop) {
-	ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
-    	prompt.get(schema, function(err, result) {
-            if (result.choice === 0) loop.break();
-            if (result.choice === 1) {
-		ezWallet.getSteemConfFile(function(err, rawContents){
-  		    return ezWallet.modifyMinerandWitnesses(err,rawContents,loop.next);
-	    });
-       	    }
-            if (result.choice === 2) {
-            	ezWallet.autowithdraw(loop.next);
-            }
-        })},
-	function () { console.log("end") }
+            ezWallet.getSteemConfFile(ezWallet.getMinerInfo);
+            prompt.get(schema, function(err, result) {
+                if (result.choice === 0) loop.break();
+                if (result.choice === 1) {
+                    ezWallet.getSteemConfFile(function(err, rawContents) {
+                        return ezWallet.modifyMinerandWitnesses(err, rawContents, loop.next);
+                    });
+                }
+                if (result.choice === 2) {
+                    ezWallet.autowithdraw(loop.next);
+                }
+            });
+        },
+        function() {
+            console.log("end");
+        }
     );
 };
 

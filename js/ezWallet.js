@@ -1,7 +1,9 @@
 //This is a javascript wrapper for steem cli_wallet
 //Usage: nodejs ezWallet.js
-//ORDER OF EXCECUTION:is_locked->set_password->unlock->getSteemConfFile->importMinerPrivateKeys->set_withdraw_vesting_route
+//ORDER OF EXCECUTION:is_locked->set_password->unlock->getSteemConfFile->
+//importMinerPrivateKeys->set_withdraw_vesting_route->list_my_accounts->withdrawVesting
 
+/*jshint esversion: 6*/
 var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
 var fs = require('fs');
@@ -99,24 +101,19 @@ var setWithdrawVestingRoute = function(callback) {
                 description: 'Which account do you want to transfer all of your miner accounts SteemPower to?',
                 type: 'string',
                 required: true
-            },
-            percent: {
-                description: 'What percentage of the SteemPower mined would you like to send? (1-100)%',
-                type: 'integer',
-                required: true,
-                before: function(value) {
-                    return value * 100;
-                }
             }
         }
+
     };
     prompt.start();
     prompt.get(schema, function(err, result) {
-        for (var results in result) {
-            reqArr.push(result[results]);
-            console.log(result[results]);
-        }
+        //from
+        reqArr.push(result.dst);
+        //100% steem power
+        reqArr.push(100000);
+        //auto_vest
         reqArr.push(false);
+        //broadcast
         reqArr.push(true);
     });
 
@@ -156,7 +153,7 @@ wif_key: the WIF Private Key to import (type: string)
 var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
     for (var key in minerKeyArray) {
-        client.request(client.request('import_key', [minerKeyArray[key]], rpcIDs.importMinerPrivateKeysID + key), function(err, response) {
+        client.request('import_key', [minerKeyArray[key]], rpcIDs.importMinerPrivateKeysID + key, function(err, response) {
             if (err) {
                 console.log('An error with importMinerPrivateKeys has occured');
                 throw err;
@@ -183,20 +180,32 @@ broadcast: true if you wish to broadcast the transaction (type: bool)
 */
 var withdrawVesting = function(callback) {
     //take keys from minerKeyArray and import them via loop
+    //TODO check if this looping works properly
     for (var acc in minerAccountArray) {
-//      TODO "Prompt user for how many vesting shares they want to power down per account, the amounts can be displayed"
-//      TODO "Via listMyAccounts"
+        var schema = {
+            properties: {
+                VESTS: {
+                    description: `How many VESTS would you like to powerdown from ${minerAccountArray[acc]}?'`,
+                    type: integer,
+                    required: true
+                }
+            }
 
-        client.request(client.request('withdraw_vesting', [minerAccountArray[acc], 0, true], rpcIDs.withdrawVestingID + acc), function(err, response) {
-            if (err) {
-                console.log('An error with withdrawVesting has occured');
-                throw err;
-            }
-            console.log('Response: ', Response);
-            if (typeof callback === 'function' && (acc === (minerAccountArray.length - 1))) {
-                callback();
-            }
+        };
+        prompt.start();
+        prompt.get(schema, function(err, response) {
+            client.request('withdraw_vesting', [minerAccountArray[acc], response.result, true], rpcIDs.withdrawVestingID + acc, function(err, response) {
+                if (err) {
+                    console.log('An error with withdrawVesting has occured');
+                    throw err;
+                }
+                console.log('Response: ', Response);
+                if (typeof callback === 'function' && (acc === (minerAccountArray.length - 1))) {
+                    callback();
+                }
+            });
         });
+
     }
 };
 /*
@@ -211,7 +220,7 @@ var listMyAccounts = function(callback) {
             console.log("An error with list_my_accounts has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        console.log("list_my_accounts Return result: " + response.result);
+        console.log("Here are your accounts and their VESTS values: \n: " + response.result);
         if (typeof callback === 'function') {
             callback(response.result);
         }
@@ -372,11 +381,13 @@ var isNew = function(callback) {
 
 var modifyMinerandWitnesses = function(err, rawContents, callback) {
     if (minerAccountArray.length > 0) {
-	console.log("\nHere are your current accounts and their corrsponding keys: ");
-	for (i = 0; i < minerAccountArray.length; i++) {
-	    console.log("   => Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
-	}
-    } else { console.log("No accounts found"); }
+        console.log("\nHere are your current accounts and their corrsponding keys: ");
+        for (i = 0; i < minerAccountArray.length; i++) {
+            console.log("   => Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
+        }
+    } else {
+        console.log("No accounts found");
+    }
     var actionSchema = {
         properties: {
             actionChoice: {
@@ -423,6 +434,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
         var lines = rawContents.split(/\n/);
         //user has selected to add an entry
         if (result.actionChoice === 1) {
+
             //parse through the array and find the start of witnesses or miners in config
             for (var line in lines) {
                 if (lines[line].match(/^# witness =/)) {
@@ -431,7 +443,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
                 }
                 if (lines[line].match(/^# miner =/)) {
                     //add to the miners one line ahead of #miners
-                    var accArr = ["[\"" + result.addAcc + "\",\"" + result.addKey + "\"]"];
+                    var accArr = [`[\"${result.addAcc}\",\"${result.addKey}\"]`];
                     lines.splice(parseInt(line) + 1, 0, "miner = " + accArr);
                 }
             }
@@ -477,14 +489,26 @@ var autowithdraw = function(callback) {
     isLocked(
         function() {
             return (unlockWallet(function() {
-                return importMinerPrivateKeys(setWithdrawVestingRoute(callback));
+                return importMinerPrivateKeys(function() {
+                    return setWithdrawVestingRoute(function() {
+                        return listMyAccounts(function() {
+                            return withdrawVesting(callback);
+                        });
+                    });
+                });
             }));
         },
         function() {
             return isNew(function(newBool) {
                 return setWalletPass(newBool, function() {
                     return unlockWallet(function() {
-                        return importMinerPrivateKeys(setWithdrawVestingRoute(callback));
+                        return importMinerPrivateKeys(function() {
+                            return setWithdrawVestingRoute(function() {
+                                return listMyAccounts(function() {
+                                    return withdrawVesting(callback);
+                                });
+                            });
+                        });
                     });
                 });
             });
@@ -497,7 +521,7 @@ var exportFuncs = {
     getSteemConfFile: getSteemConfFile,
     getMinerInfo: getMinerInfo,
     modifyMinerandWitnesses: modifyMinerandWitnesses,
-    autowithdraw: autowithdraw
+    autowithdraw: autowithdraw,
 };
 
 module.exports = exportFuncs;
