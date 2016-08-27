@@ -486,12 +486,8 @@ var autowithdraw = function(callback) {
         if (newBool === true) {
             return setWalletPass(newBool, () => {
                 return unlockWallet(() => {
-                    return importMinerPrivateKeys(() => {
-                        return setWithdrawVestingRoute(() => {
-                            return listMyAccounts(() => {
-                                return withdrawVesting(callback);
-                            });
-                        });
+                    return _autoWithdrawHelper(() => {
+                        return listMyAccounts(callback);
                     });
                 });
             });
@@ -501,27 +497,20 @@ var autowithdraw = function(callback) {
             isLocked((locked) => {
                 if (locked === true) {
                     return unlockWallet(() => {
-                        return importMinerPrivateKeys(() => {
-                            return setWithdrawVestingRoute(() => {
-                                return listMyAccounts(() => {
-                                    return withdrawVesting(callback);
-                                });
-                            });
+                        return _autoWithdrawHelper(() => {
+                            return listMyAccounts(callback);
                         });
                     });
                 } else {
-                    return importMinerPrivateKeys(() => {
-                        return setWithdrawVestingRoute(() => {
-                            return listMyAccounts(() => {
-                                return withdrawVesting(callback);
-                            });
-                        });
+                    return _autoWithdrawHelper(() => {
+                        return listMyAccounts(callback);
                     });
                 }
             });
         }
     });
 };
+
 var _autoWithdrawHelper = function(callback) {
     return importMinerPrivateKeys(() => {
         return setWithdrawVestingRoute(() => {
@@ -531,6 +520,7 @@ var _autoWithdrawHelper = function(callback) {
         });
     });
 };
+
 //export object encapsulating the functions required for ezWalletMenu.js
 var exportFuncs = {
     getSteemConfFile: getSteemConfFile,
