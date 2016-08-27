@@ -341,7 +341,7 @@ This state can be changed by calling 'lock()' or 'unlock()'.
 Returns
 true if the wallet is locked
 */
-var isLocked = function(callback1, callback2) {
+var isLocked = function(callback) {
     //use for checking if wallet is locked before performing any actions
     client.request('is_locked', [], rpcIDs.isLockedID, function(err, response) {
         if (err) {
@@ -350,14 +350,9 @@ var isLocked = function(callback1, callback2) {
         }
         console.log("isLocked Return result:" + response.result);
         //if the wallet is locked === true
-        if (response.result === false) {
-            callback1();
+        if (typeof callback === 'function') {
+            callback(response.result);
         }
-        //else set the pass and then unlock
-        else {
-            callback2();
-        }
-
     });
 };
 
@@ -484,38 +479,58 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     });
 };
 
-var autowithdraw = function(callback) {
 
-    isLocked(
-        function() {
-            return (unlockWallet(function() {
-                return importMinerPrivateKeys(function() {
-                    return setWithdrawVestingRoute(function() {
-                        return listMyAccounts(function() {
-                            return withdrawVesting(callback);
-                        });
-                    });
-                });
-            }));
-        },
-        function() {
-            return isNew(function(newBool) {
-                return setWalletPass(newBool, function() {
-                    return unlockWallet(function() {
-                        return importMinerPrivateKeys(function() {
-                            return setWithdrawVestingRoute(function() {
-                                return listMyAccounts(function() {
-                                    return withdrawVesting(callback);
-                                });
+var autowithdraw = function(callback) {
+    isNew((newBool) => {
+        //if wallet is new
+        if (newBool === true) {
+            return setWalletPass(newBool, () => {
+                return unlockWallet(() => {
+                    return importMinerPrivateKeys(() => {
+                        return setWithdrawVestingRoute(() => {
+                            return listMyAccounts(() => {
+                                return withdrawVesting(callback);
                             });
                         });
                     });
                 });
             });
         }
-    );
+        //if wallet is false
+        else {
+            isLocked((locked) => {
+                if (locked === true) {
+                    return unlockWallet(() => {
+                        return importMinerPrivateKeys(() => {
+                            return setWithdrawVestingRoute(() => {
+                                return listMyAccounts(() => {
+                                    return withdrawVesting(callback);
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    return importMinerPrivateKeys(() => {
+                        return setWithdrawVestingRoute(() => {
+                            return listMyAccounts(() => {
+                                return withdrawVesting(callback);
+                            });
+                        });
+                    });
+                }
+            });
+        }
+    });
 };
-
+var _autoWithdrawHelper = function(callback) {
+    return importMinerPrivateKeys(() => {
+        return setWithdrawVestingRoute(() => {
+            return listMyAccounts(() => {
+                callback();
+            });
+        });
+    });
+};
 //export object encapsulating the functions required for ezWalletMenu.js
 var exportFuncs = {
     getSteemConfFile: getSteemConfFile,
