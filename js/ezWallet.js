@@ -151,19 +151,18 @@ wif_key: the WIF Private Key to import (type: string)
 var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
     var i = 0;
-    while(i < minerKeyArray.length) {
-        client.request('import_key', [minerKeyArray[i]], rpcIDs.importMinerPrivateKeysID + i, function(err, response) {
-            if (err) {
-                console.log('An error with importMinerPrivateKeys has occured');
-                throw err;
-            }
-            console.log('Response: ', response);
-            if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
-                callback();
-            }
-            i++;
-        });
-    }
+    minerKeyArray.forEach((i) =>{
+      client.request('import_key', [minerKeyArray[i]], rpcIDs.importMinerPrivateKeysID + i, function(err, response) {
+          if (err) {
+              console.log('An error with importMinerPrivateKeys has occured');
+              throw err;
+          }
+          console.log('Response: ', response);
+          if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
+              callback();
+          }
+      });
+    });
 };
 /*
 gethelp withdraw_vesting
