@@ -98,7 +98,7 @@ var setWithdrawVestingRoute = function(callback) {
     var schema = {
         properties: {
             dst: {
-                description: 'Which account do you want to transfer all of your miner accounts SteemPower to?',
+                description: 'Which account do you want to transfer all of your miner accounts SteemPower to?\n',
                 type: 'string',
                 required: true
             }
@@ -150,14 +150,14 @@ wif_key: the WIF Private Key to import (type: string)
 */
 var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
-    for (var key in minerKeyArray) {
-        client.request('import_key', [minerKeyArray[key]], rpcIDs.importMinerPrivateKeysID + key, function(err, response) {
+    for (i = 0; i < minerKeyArray.length; i++) {
+        client.request('import_key', [minerKeyArray[i]], rpcIDs.importMinerPrivateKeysID + i, function(err, response) {
             if (err) {
                 console.log('An error with importMinerPrivateKeys has occured');
                 throw err;
             }
             console.log('Response: ', response);
-            if (typeof callback === 'function' && (parseInt(key) === (minerKeyArray.length - 1))) {
+            if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
                 callback();
             }
         });
