@@ -110,7 +110,7 @@ var setWithdrawVestingRoute = function(callback) {
         //from
         reqArr.push(result.dst);
         //100% steem power
-        reqArr.push(100000);
+        reqArr.push(10000);
         //auto_vest
         reqArr.push(false);
         //broadcast
@@ -120,8 +120,8 @@ var setWithdrawVestingRoute = function(callback) {
         //instead of automatically looping through all accounts
         //(or give both options)
         //should be using rpc call get_account to verify account names
-        for (i = 0; i < minerAccountArray.length; i++) {
-            reqArr.unshift(minerAccountArray[i]);
+        minerAccountArray.forEach((acc, i) => {
+            reqArr.unshift(acc);
             client.request('set_withdraw_vesting_route', reqArr, rpcIDs.setWithdrawVestingRouteID + i, function(err, response) {
                 if (err) {
                     console.log('An error with set_withdraw_vesting_route has occured');
@@ -134,7 +134,7 @@ var setWithdrawVestingRoute = function(callback) {
                 }
             });
             reqArr.shift();
-        }
+        });
     });
 };
 /*
@@ -151,17 +151,17 @@ wif_key: the WIF Private Key to import (type: string)
 var importMinerPrivateKeys = function(callback) {
     //take keys from minerKeyArray and import them via loop
     var i = 0;
-    minerKeyArray.forEach((key,i) =>{
-      client.request('import_key', [key], rpcIDs.importMinerPrivateKeysID + i, function(err, response) {
-          if (err) {
-              console.log('An error with importMinerPrivateKeys has occured');
-              throw err;
-          }
-          console.log('Response: ', response);
-          if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
-              callback();
-          }
-      });
+    minerKeyArray.forEach((key, i) => {
+        client.request('import_key', [key], rpcIDs.importMinerPrivateKeysID + i, function(err, response) {
+            if (err) {
+                console.log('An error with importMinerPrivateKeys has occured');
+                throw err;
+            }
+            console.log('Response: ', response);
+            if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
+                callback();
+            }
+        });
     });
 };
 /*
@@ -180,7 +180,7 @@ broadcast: true if you wish to broadcast the transaction (type: bool)
 var withdrawVesting = function(callback) {
     //take keys from minerKeyArray and import them via loop
     //TODO check if this looping works properly
-    for (var acc in minerAccountArray) {
+    minerAccountArray.forEach((acc, i) => {
         var schema = {
             properties: {
                 VESTS: {
@@ -193,19 +193,20 @@ var withdrawVesting = function(callback) {
         };
         prompt.start();
         prompt.get(schema, function(err, response) {
-            client.request('withdraw_vesting', [minerAccountArray[acc], response.result, true], rpcIDs.withdrawVestingID + acc, function(err, response) {
+            client.request('withdraw_vesting', [acc, response.result, true], rpcIDs.withdrawVestingID + i, function(err, response) {
                 if (err) {
                     console.log('An error with withdrawVesting has occured');
                     throw err;
                 }
                 console.log('Response: ', Response);
-                if (typeof callback === 'function' && (parseInt(acc) === (minerAccountArray.length - 1))) {
+                if (typeof callback === 'function' && (i === (minerAccountArray.length - 1))) {
                     callback();
                 }
             });
         });
 
-    }
+
+    });
 };
 /*
 gethelp list_my_accounts
