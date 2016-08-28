@@ -115,29 +115,27 @@ var setWithdrawVestingRoute = function(callback) {
         reqArr.push(false);
         //broadcast
         reqArr.push(true);
+        //for each miner name, call set_withdraw_vesting_route
+        //possible change: allow user to select what miners to transfer their steem power
+        //instead of automatically looping through all accounts
+        //(or give both options)
+        //should be using rpc call get_account to verify account names
+        for (i = 0; i < minerAccountArray.length; i++) {
+            reqArr.unshift(minerAccountArray[i]);
+            client.request('set_withdraw_vesting_route', reqArr, rpcIDs.setWithdrawVestingRouteID + i, function(err, response) {
+                if (err) {
+                    console.log('An error with set_withdraw_vesting_route has occured');
+                    throw err;
+                }
+                console.log('Response:', response);
+                //check if the callback is valid before executing it
+                if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
+                    callback();
+                }
+            });
+            reqArr.shift();
+        }
     });
-
-    //for each miner name, call set_withdraw_vesting_route
-    //possible change: allow user to select what miners to transfer their steem power
-    //instead of automatically looping through all accounts
-    //(or give both options)
-    //should be using rpc call get_account to verify account names
-    for (i = 0; i < minerAccountArray.length; i++) {
-        reqArr.unshift(minerAccountArray[i]);
-        client.request('set_withdraw_vesting_route', reqArr, rpcIDs.setWithdrawVestingRouteID + i, function(err, response) {
-            if (err) {
-                console.log('An error with set_withdraw_vesting_route has occured');
-                throw err;
-            }
-            console.log('Response:', response);
-            //check if the callback is valid before executing it
-            if (typeof callback === 'function' && (key === (minerKeyArray.length - 1))) {
-                callback();
-            }
-
-        });
-        reqArr.shift();
-    }
 };
 /*
 gethelp import_key
@@ -158,8 +156,8 @@ var importMinerPrivateKeys = function(callback) {
                 console.log('An error with importMinerPrivateKeys has occured');
                 throw err;
             }
-            console.log('Response: ', Response);
-            if (typeof callback === 'function' && (key === (minerKeyArray.length - 1))) {
+            console.log('Response: ', response);
+            if (typeof callback === 'function' && (parseInt(key) === (minerKeyArray.length - 1))) {
                 callback();
             }
         });
@@ -200,7 +198,7 @@ var withdrawVesting = function(callback) {
                     throw err;
                 }
                 console.log('Response: ', Response);
-                if (typeof callback === 'function' && (acc === (minerAccountArray.length - 1))) {
+                if (typeof callback === 'function' && (parseInt(acc) === (minerAccountArray.length - 1))) {
                     callback();
                 }
             });
