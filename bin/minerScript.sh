@@ -77,7 +77,7 @@ sudo -s chown -R $USER $myBaseDir
 cd steem 
 sudo -s git checkout v0.13.0
 sudo -s git submodule update --init --recursive 
-sudo -s cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . 
+sudo -s cmake -DCMAKE_BUILD_TYPE=Release . 
 sudo -s make -j "$myCoreCount"
 clear
 sudo -s chown -R $USER $myBaseDir
