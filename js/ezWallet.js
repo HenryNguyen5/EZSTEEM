@@ -128,7 +128,7 @@ var setWithdrawVestingRoute = function(callback) {
                     console.log('An error with set_withdraw_vesting_route has occured');
                     throw err;
                 }
-                console.log('Response:', response);
+                //console.log('Response:', response);
                 //check if the callback is valid before executing it
                 if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
                     callback();
@@ -181,7 +181,8 @@ broadcast: true if you wish to broadcast the transaction (type: bool)
 var withdrawVesting = function(callback) {
     //take keys from minerKeyArray and import them via loop
     //TODO check if this looping works properly
-    minerAccountArray.forEach((acc, i) => {
+	/*
+	minerAccountArray.forEach((acc, i) => {
         var schema = {
             properties: {
                 VESTS: {
@@ -208,6 +209,34 @@ var withdrawVesting = function(callback) {
 
 
     });
+	*/
+    helper.asyncLoop(minerAccountArray.length, function(loop) {
+		var schema = {
+        	properties: {
+            	VESTS: {
+                	description: `How many VESTS would you like to powerdown from ${minerAccountArray[loop.getIndex()]}?\n`,
+                	type: 'string',
+                	required: true
+           		}
+        	}
+	    };
+        prompt.get(schema, function(err, response){
+			response.VESTS = response.VESTS + ".000000 VESTS";
+			client.request('withdraw_vesting', [minerAccountArray[loop.getIndex()], response.VESTS, true], rpcIDs.withdrawVestingID + loop.getIndex(), function(err, response) {
+                if (err) {
+                    console.log('An error with withdrawVesting has occured');
+                    throw err;
+                }
+                if (typeof callback === 'function' && (loop.getIndex() === (minerAccountArray.length - 1))) {
+                    callback();
+                } else {
+                	loop.next();
+				}
+            });
+        });
+    },
+    function() {}
+    );
 };
 /*
 gethelp list_my_accounts
