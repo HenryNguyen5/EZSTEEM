@@ -7,6 +7,7 @@
 var jayson = require('./node_modules/jayson');
 var prompt = require('./node_modules/prompt');
 var fs = require('fs');
+var helper = require('./helper.js');
 var colors = require('colors');
 var rpcIDs = {
     setWithdrawVestingRouteID: 1,
@@ -184,8 +185,8 @@ var withdrawVesting = function(callback) {
         var schema = {
             properties: {
                 VESTS: {
-                    description: `How many VESTS would you like to powerdown from ${minerAccountArray[acc]}?'`,
-                    type: integer,
+                    description: `How many VESTS would you like to powerdown from ${acc}?\n`,
+                    type: 'integer',
                     required: true
                 }
             }
@@ -198,7 +199,7 @@ var withdrawVesting = function(callback) {
                     console.log('An error with withdrawVesting has occured');
                     throw err;
                 }
-                console.log('Response: ', Response);
+                console.log('Response: ', response);
                 if (typeof callback === 'function' && (i === (minerAccountArray.length - 1))) {
                     callback();
                 }
