@@ -66,6 +66,8 @@ cd "$myBaseDir/steem"
 sudo -s git fetch
 sudo -s git checkout v0.13.0
 sudo -s git submodule update --recursive
+sudo -s git cherry-pick 2096e96eb97e4c85c0c9445ff8f0156c5ac2a620
+sudo -s git cherry-pick a8f34fe0e85aba4613037d895b02f3a108229b11
 sudo -s rm -f CMakeCache.txt
 sudo -s make -s clean > /dev/null
 sudo -s cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON .
