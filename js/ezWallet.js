@@ -243,7 +243,7 @@ var unlockWallet = function(callback) {
     var schema = {
         properties: {
             password: {
-                description: 'Your wallet is locked, please enter your password to unlock it',
+                description: 'Your wallet is locked, please enter your password to unlock it\n',
                 type: 'string',
                 hidden: true,
                 replace: '*',
