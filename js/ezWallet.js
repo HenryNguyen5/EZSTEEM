@@ -227,7 +227,7 @@ var listMyAccounts = function(callback) {
 	${response.result[i].sbd_balance}`);
 		}
         if (typeof callback === 'function') {
-            callback(response.result);
+            callback();
         }
     });
 };
@@ -492,7 +492,7 @@ var autowithdraw = function(callback) {
             return setWalletPass(newBool, () => {
                 return unlockWallet(() => {
                     return _autoWithdrawHelper(() => {
-                        return listMyAccounts(callback);
+                        return withdrawVesting(callback);
                     });
                 });
             });
@@ -503,12 +503,12 @@ var autowithdraw = function(callback) {
                 if (locked === true) {
                     return unlockWallet(() => {
                         return _autoWithdrawHelper(() => {
-                            return listMyAccounts(callback);
+                            return withdrawVesting(callback);
                         });
                     });
                 } else {
                     return _autoWithdrawHelper(() => {
-                        return listMyAccounts(callback);
+                        return withdrawVesting(callback);
                     });
                 }
             });
