@@ -220,7 +220,12 @@ var listMyAccounts = function(callback) {
             console.log("An error with list_my_accounts has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        console.log("Here are your accounts and their VESTS values: \n: " + response.result);
+        console.log("Here are your accounts and their VESTS values: \n ");
+		for (var i in response.result) {
+			console.log(`${response.result[i].name}:	${response.result[i].balance}
+	${response.result[i].vesting_shares}
+	${response.result[i].sbd_balance}`);
+		}
         if (typeof callback === 'function') {
             callback(response.result);
         }
