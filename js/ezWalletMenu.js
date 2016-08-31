@@ -17,7 +17,7 @@ var desc = `\n What would you like to do today?
  2)  Transfer your miner's SteemPower to a single account
  0)  Exit
 
-`.white;
+`.magenta;
 
 var runMenu = function() {
     //prompt the user
