@@ -82,6 +82,9 @@ sudo -s git clone https://github.com/steemit/steem
 cd steem 
 sudo -s git checkout v0.13.0
 sudo -s git submodule update --init --recursive 
+sudo -s git fetch
+sudo -s git cherry-pick 2096e96eb97e4c85c0c9445ff8f0156c5ac2a620
+sudo -s git cherry-pick a8f34fe0e85aba4613037d895b02f3a108229b11
 ##sudo cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON . 
 sudo cmake -DCMAKE_BUILD_TYPE=Release . 
 sudo -s make -j "$myCoreCount"
