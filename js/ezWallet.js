@@ -326,14 +326,14 @@ var setWalletPass = function(isNew, callback) {
     var schema = {
         properties: {
             password: {
-                description: 'Please enter a password for your wallet: ',
+                description: 'Please enter a password for your wallet:\n',
                 type: 'string',
                 hidden: true,
                 replace: '*',
                 required: true
             },
             verify: {
-                description: 'Please enter in your password again: ',
+                description: 'Please enter in your password again:\n',
                 type: 'string',
                 hidden: true,
                 replace: '*',
