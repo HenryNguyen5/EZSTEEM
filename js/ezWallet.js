@@ -294,7 +294,6 @@ var unlockWallet = function(callback) {
             console.log("Password prompt error");
             throw err;
         }
-        console.log(result.password);
         client.request('unlock', [result.password], rpcIDs.unlockWalletID, function(err, response) {
             if (err) {
                 console.log("An error with unlock has occured");
