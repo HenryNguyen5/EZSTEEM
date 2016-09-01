@@ -2,4 +2,4 @@
 
 Please visit this link for instructions:
 
-https://steemit.com/allinone/@omotherhen/ezsteem-suite-1-0-the-ez-way-to-setup-your-steem-miner-node-in-a-linux-vm-windows-compatible
+https://steemit.com/steemit/@omotherhen/ezsteem-1-2-update-transfer-your-mined-obtained-sp-in-one-step-and-configure-your-miners
