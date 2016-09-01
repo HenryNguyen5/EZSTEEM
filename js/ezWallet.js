@@ -214,20 +214,21 @@ var withdrawVesting = function(callback) {
 		var schema = {
         	properties: {
             	VESTS: {
-                	description: `How many VESTS would you like to powerdown from ${minerAccountArray[loop.getIndex()]}?\n`,
+                	description: `How many VESTS would you like to powerdown from ${minerAccountArray[loop.iteration()]}?\n`,
                 	type: 'string',
                 	required: true
            		}
         	}
 	    };
+	
         prompt.get(schema, function(err, response){
 			response.VESTS = response.VESTS + ".000000 VESTS";
-			client.request('withdraw_vesting', [minerAccountArray[loop.getIndex()], response.VESTS, true], rpcIDs.withdrawVestingID + loop.getIndex(), function(err, response) {
+			client.request('withdraw_vesting', [minerAccountArray[loop.iteration()], response.VESTS, true], rpcIDs.withdrawVestingID + loop.index, function(err, response) {
                 if (err) {
                     console.log('An error with withdrawVesting has occured');
                     throw err;
                 }
-                if (typeof callback === 'function' && (loop.getIndex() === (minerAccountArray.length - 1))) {
+                if (typeof callback === 'function' && (loop.iteration() === (minerAccountArray.length - 1))) {
                     callback();
                 } else {
                 	loop.next();
