@@ -27,6 +27,16 @@ var asyncLoop = function(iterations, func, callback) {
     loop.next();
     return loop;
 };
+
+var convertVESTS = function(steem, vests) {
+    steem = steem.slice(0, -6);
+    vests = vests.slice(0, -6);
+    steem = parseInt(steem);
+    vests = parseInt(vests);
+    return toString(steem/vests*1000000) + " STEEM";
+};
+
 module.exports = {
-    asyncLoop: asyncLoop
+    asyncLoop: asyncLoop,
+    convertVESTS: convertVESTS
 };
