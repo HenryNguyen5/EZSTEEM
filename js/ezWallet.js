@@ -10,14 +10,15 @@ var fs = require('fs');
 var helper = require('./helper.js');
 var colors = require('colors');
 var rpcIDs = {
-    setWithdrawVestingRouteID: 1,
-    setWalletPassID: 2,
-    importMinerPrivateKeysID: 3,
-    unlockWalletID: 4,
-    isLockedID: 5,
-    isNewID: 6,
-    withdrawVestingID: 7,
-    listMyAccountsID: 8
+    setWithdrawVestingRouteID:  1,
+    setWalletPassID:            2,
+    importMinerPrivateKeysID:   3,
+    unlockWalletID:             4,
+    isLockedID:                 5,
+    isNewID:                    6,
+    withdrawVestingID:          7,
+    listMyAccountsID:           8,
+    info:                       9
 };
 
 //create a client to interact with cli_wallet
@@ -516,6 +517,15 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     });
 };
 
+var getRatio = function() {
+    client.request('info', [], rpcIDs.info, function(err, response) {
+        if (err) {
+            console.log("An error with info has occured: SHOULD NOT HAPPEN");
+            throw err;
+        }
+        console.log(response);
+    });
+};
 
 var autowithdraw = function(callback) {
     isNew((newBool) => {
