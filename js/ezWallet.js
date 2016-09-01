@@ -26,7 +26,7 @@ var client = jayson.client.http('http://127.0.0.1:8091');
 var minerAccountArray = [];
 var minerKeyArray = [];
 var steemConf = "";
-
+var dst = "";
 //get the config dir from ezsteem conf
 //then read the config file and call required callback
 var getSteemConfFile = function(callback) {
@@ -108,6 +108,7 @@ var setWithdrawVestingRoute = function(callback) {
     };
     prompt.start();
     prompt.get(schema, function(err, result) {
+        dst = result.dst;
         //from
         reqArr.push(result.dst);
         //100% steem power
@@ -138,6 +139,36 @@ var setWithdrawVestingRoute = function(callback) {
         });
     });
 };
+//undo the route we set
+var unsetWithdrawVestingRoute = function(callback) {
+    //fill in required miner arrays
+    var reqArr = [];
+    //prompt the user for their destination wallet and the percentile
+    //from
+    reqArr.push(dst);
+    //cancel withdraw route
+    reqArr.push(0);
+    //auto_vest
+    reqArr.push(false);
+    //broadcast
+    reqArr.push(true);
+    //for each miner name, call set_withdraw_vesting_route
+    //should be using rpc call get_account to verify account names
+    minerAccountArray.forEach((acc, i) => {
+        reqArr.unshift(acc);
+        client.request('set_withdraw_vesting_route', reqArr, rpcIDs.setWithdrawVestingRouteID + i, function(err, response) {
+            if (err) {
+                console.log('An error with unset_withdraw_vesting_route has occured');
+                throw err;
+            }
+            //check if the callback is valid before executing it
+            if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
+                callback();
+            }
+        });
+        reqArr.shift();
+    });
+};
 /*
 gethelp import_key
 
@@ -158,7 +189,7 @@ var importMinerPrivateKeys = function(callback) {
                 console.log('An error with importMinerPrivateKeys has occured');
                 throw err;
             }
-            console.log('Response: ', response);
+            //console.log('Response: ', response);
             if (typeof callback === 'function' && (i === (minerKeyArray.length - 1))) {
                 callback();
             }
@@ -180,63 +211,33 @@ broadcast: true if you wish to broadcast the transaction (type: bool)
 */
 var withdrawVesting = function(callback) {
     //take keys from minerKeyArray and import them via loop
-    //TODO check if this looping works properly
-	/*
-	minerAccountArray.forEach((acc, i) => {
-        var schema = {
-            properties: {
-                VESTS: {
-                    description: `How many VESTS would you like to powerdown from ${acc}?\n`,
-                    type: 'integer',
-                    required: true
-                }
-            }
-
-        };
-        prompt.start();
-        prompt.get(schema, function(err, response) {
-            client.request('withdraw_vesting', [acc, response.result, true], rpcIDs.withdrawVestingID + i, function(err, response) {
-                if (err) {
-                    console.log('An error with withdrawVesting has occured');
-                    throw err;
-                }
-                console.log('Response: ', response);
-                if (typeof callback === 'function' && (i === (minerAccountArray.length - 1))) {
-                    callback();
-                }
-            });
-        });
-
-
-    });
-	*/
     helper.asyncLoop(minerAccountArray.length, function(loop) {
-		var schema = {
-        	properties: {
-            	VESTS: {
-                	description: `How many VESTS would you like to powerdown from ${minerAccountArray[loop.iteration()]}?\n`,
-                	type: 'string',
-                	required: true
-           		}
-        	}
-	    };
-	
-        prompt.get(schema, function(err, response){
-			response.VESTS = response.VESTS + ".000000 VESTS";
-			client.request('withdraw_vesting', [minerAccountArray[loop.iteration()], response.VESTS, true], rpcIDs.withdrawVestingID + loop.index, function(err, response) {
-                if (err) {
-                    console.log('An error with withdrawVesting has occured');
-                    throw err;
+            var schema = {
+                properties: {
+                    VESTS: {
+                        description: `How many VESTS would you like to powerdown from ${minerAccountArray[loop.iteration()]}?\n`,
+                        type: 'string',
+                        required: true
+                    }
                 }
-                if (typeof callback === 'function' && (loop.iteration() === (minerAccountArray.length - 1))) {
-                    callback();
-                } else {
-                	loop.next();
-				}
+            };
+
+            prompt.get(schema, function(err, response) {
+                response.VESTS = response.VESTS + ".000000 VESTS";
+                client.request('withdraw_vesting', [minerAccountArray[loop.iteration()], response.VESTS, true], rpcIDs.withdrawVestingID + loop.index, function(err, response) {
+                    if (err) {
+                        console.log('An error with withdrawVesting has occured');
+                        throw err;
+                    }
+                    if (typeof callback === 'function' && (loop.iteration() === (minerAccountArray.length - 1))) {
+                        callback();
+                    } else {
+                        loop.next();
+                    }
+                });
             });
-        });
-    },
-    function() {}
+        },
+        function() {}
     );
 };
 /*
@@ -252,11 +253,11 @@ var listMyAccounts = function(callback) {
             throw err;
         }
         console.log("Here are your accounts and their VESTS values: \n ");
-		for (var i in response.result) {
-			console.log(`${response.result[i].name}:	${response.result[i].balance}
+        for (var i in response.result) {
+            console.log(`${response.result[i].name}:	${response.result[i].balance}
 	${response.result[i].vesting_shares}
 	${response.result[i].sbd_balance}`);
-		}
+        }
         if (typeof callback === 'function') {
             callback();
         }
@@ -299,7 +300,7 @@ var unlockWallet = function(callback) {
                 console.log("An error with unlock has occured");
                 throw err;
             }
-            console.log("Unlock result: " + response.result);
+            //console.log("Unlock result: " + response.result);
             if (typeof callback === 'function') {
                 callback(response.result);
             }
@@ -357,7 +358,7 @@ var setWalletPass = function(isNew, callback) {
                     console.log("An error with set_password has occured");
                     throw err;
                 }
-                console.log("set_password result: " + response.result);
+                //console.log("set_password result: " + response.result);
                 //check if the callback is valid before executing it
                 if (typeof callback === 'function') {
                     callback();
@@ -384,7 +385,7 @@ var isLocked = function(callback) {
             console.log("An error with is_locked has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        console.log("isLocked Return result:" + response.result);
+        //console.log("isLocked Return result:" + response.result);
         //if the wallet is locked === true
         if (typeof callback === 'function') {
             callback(response.result);
@@ -398,7 +399,7 @@ var isNew = function(callback) {
             console.log("An error with is_new has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        console.log("isNew Return result: " + response.result);
+        //  console.log("isNew Return result: " + response.result);
         if (typeof callback === 'function') {
             callback(response.result);
         }
@@ -522,9 +523,7 @@ var autowithdraw = function(callback) {
         if (newBool === true) {
             return setWalletPass(newBool, () => {
                 return unlockWallet(() => {
-                    return _autoWithdrawHelper(() => {
-                        return withdrawVesting(callback);
-                    });
+                    return _autoWithdrawHelper(callback);
                 });
             });
         }
@@ -533,14 +532,10 @@ var autowithdraw = function(callback) {
             isLocked((locked) => {
                 if (locked === true) {
                     return unlockWallet(() => {
-                        return _autoWithdrawHelper(() => {
-                            return withdrawVesting(callback);
-                        });
+                        return _autoWithdrawHelper(callback);
                     });
                 } else {
-                    return _autoWithdrawHelper(() => {
-                        return withdrawVesting(callback);
-                    });
+                    return _autoWithdrawHelper(callback);
                 }
             });
         }
@@ -551,7 +546,9 @@ var _autoWithdrawHelper = function(callback) {
     return importMinerPrivateKeys(() => {
         return setWithdrawVestingRoute(() => {
             return listMyAccounts(() => {
-                callback();
+                return withdrawVesting(() => {
+                    return unsetWithdrawVestingRoute(callback);
+                });
             });
         });
     });
