@@ -10,15 +10,15 @@ var fs = require('fs');
 var helper = require('./helper.js');
 var colors = require('colors');
 var rpcIDs = {
-    setWithdrawVestingRouteID:  1,
-    setWalletPassID:            2,
-    importMinerPrivateKeysID:   3,
-    unlockWalletID:             4,
-    isLockedID:                 5,
-    isNewID:                    6,
-    withdrawVestingID:          7,
-    listMyAccountsID:           8,
-    info:                       9
+    setWithdrawVestingRouteID: 1,
+    setWalletPassID: 2,
+    importMinerPrivateKeysID: 3,
+    unlockWalletID: 4,
+    isLockedID: 5,
+    isNewID: 6,
+    withdrawVestingID: 7,
+    listMyAccountsID: 8,
+    infoID: 9
 };
 
 //create a client to interact with cli_wallet
@@ -28,6 +28,7 @@ var minerAccountArray = [];
 var minerKeyArray = [];
 var steemConf = "";
 var dst = "";
+var steemPowerRatio;
 //get the config dir from ezsteem conf
 //then read the config file and call required callback
 var getSteemConfFile = function(callback) {
@@ -253,11 +254,11 @@ var listMyAccounts = function(callback) {
             console.log("An error with list_my_accounts has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        console.log("\nHere are your accounts and their VESTS values:");
+        console.log("\nHere are your accounts and their SteemPower values:");
         for (var i in response.result) {
             var curr = response.result[i];
             console.log(`   ${curr.name}:	${curr.balance}
-	               ${helper.convertVESTS(1,1,1)}
+			              ${curr.vesting_shares*steemPowerRatio}
 	                  ${curr.sbd_balance}\n`);
         }
         if (typeof callback === 'function') {
@@ -517,15 +518,16 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     });
 };
 
-var getRatio = function() {
-    client.request('info', [], rpcIDs.info, function(err, response) {
+var getRatio = function(callback) {
+    client.request('info', [], rpcIDs.infoID, function(err, response) {
         if (err) {
             console.log("An error with info has occured: SHOULD NOT HAPPEN");
             throw err;
         }
         var steem = response.result.total_vesting_fund_steem;
         var vests = response.result.total_vesting_shares;
-        var ratio = steem/vests*1000000;
+        steemPowerratio = steem / vests;
+        return callback();
     });
 };
 
@@ -557,9 +559,11 @@ var autowithdraw = function(callback) {
 var _autoWithdrawHelper = function(callback) {
     return importMinerPrivateKeys(() => {
         return setWithdrawVestingRoute(() => {
-            return listMyAccounts(() => {
-                return withdrawVesting(() => {
-                    return unsetWithdrawVestingRoute(callback);
+            return getRatio(() => {
+                return listMyAccounts(() => {
+                    return withdrawVesting(() => {
+                        return unsetWithdrawVestingRoute(callback);
+                    });
                 });
             });
         });
