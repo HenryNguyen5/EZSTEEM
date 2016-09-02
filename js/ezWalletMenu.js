@@ -11,6 +11,8 @@ console.log(`
 --------------------Welcome to ezWallet--------------------
 -----------------------------------------------------------`.magenta);
 
+console.log(`---------------------------Menu----------------------------`.magenta);
+
 var desc = `\n What would you like to do today?
 
  1)  View or modify your miner entries

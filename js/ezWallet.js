@@ -17,7 +17,8 @@ var rpcIDs = {
     isLockedID: 5,
     isNewID: 6,
     withdrawVestingID: 7,
-    listMyAccountsID: 8
+    listMyAccountsID: 8,
+    infoID: 9
 };
 
 //create a client to interact with cli_wallet
@@ -27,6 +28,7 @@ var minerAccountArray = [];
 var minerKeyArray = [];
 var steemConf = "";
 var dst = "";
+var steemPowerRatio;
 //get the config dir from ezsteem conf
 //then read the config file and call required callback
 var getSteemConfFile = function(callback) {
@@ -99,7 +101,7 @@ var setWithdrawVestingRoute = function(callback) {
     var schema = {
         properties: {
             dst: {
-                description: 'Which account do you want to transfer all of your miner accounts SteemPower to?\n',
+                description: '\nWhich account do you want to transfer all of your miner accounts SteemPower to?\n',
                 type: 'string',
                 required: true
             }
@@ -252,11 +254,12 @@ var listMyAccounts = function(callback) {
             console.log("An error with list_my_accounts has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        console.log("Here are your accounts and their VESTS values: \n ");
+        console.log("\nHere are your accounts and their SteemPower values:");
         for (var i in response.result) {
-            console.log(`${response.result[i].name}:	${response.result[i].balance}
-	${response.result[i].vesting_shares}
-	${response.result[i].sbd_balance}`);
+            var curr = response.result[i];
+            console.log(`   ${curr.name}:	${curr.balance}
+			              ${helper.convertVests(curr.vesting_shares,steemPowerRatio)}
+	                  ${curr.sbd_balance}\n`);
         }
         if (typeof callback === 'function') {
             callback();
@@ -414,7 +417,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     if (minerAccountArray.length > 0) {
         console.log("\nHere are your current accounts and their corrsponding keys: ");
         for (i = 0; i < minerAccountArray.length; i++) {
-            console.log("   => Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
+            console.log("   Account " + i + ": " + minerAccountArray[i] + ", Key " + i + ": " + minerKeyArray[i]);
         }
     } else {
         console.log("No accounts found");
@@ -422,14 +425,14 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     var actionSchema = {
         properties: {
             actionChoice: {
-                description: '\n Would you like to: \n 1) Add \n 2) Remove \n 0) Exit \n An account?\n'.white,
+                description: '\n Would you like to: \n 1)  Add \n 2)  Remove \n 0)  Exit \n An account?\n'.magenta,
                 pattern: /([0-2])/,
                 type: 'integer',
                 required: true
             },
             //need to perform additional checks on addAcc
             addAcc: {
-                description: '\nEnter the account name you want to add:\n'.white,
+                description: '\nEnter the account name you want to add:\n',
                 type: 'string',
                 ask: function() {
                     //only ask for account name if '1' was selected
@@ -439,7 +442,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
             },
             //need to perform additional checks on addkey
             addKey: {
-                description: 'Enter the account private key you want to add:\n'.white,
+                description: 'Enter the account private key you want to add:\n',
                 type: 'string',
                 ask: function() {
                     //only ask for account key if '1' was selected
@@ -448,7 +451,7 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
                 required: true
             },
             remove: {
-                description: '\nEnter the account number you want to remove:\n'.white,
+                description: '\nEnter the account number you want to remove:\n',
                 type: 'integer',
                 ask: function() {
                     //only ask for account removal if '2' was selected
@@ -515,6 +518,20 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     });
 };
 
+//Calls info in cli_wallet and uses info to find conversion Ratio for Vests -> STEEM
+var getRatio = function(callback) {
+    client.request('info', [], rpcIDs.infoID, function(err, response) {
+        if (err) {
+            console.log("An error with info has occured: SHOULD NOT HAPPEN");
+            throw err;
+        }
+        //cut off non-number text and convert to numbers
+        var steem = parseInt(response.result.total_vesting_fund_steem.slice(0,-6));
+        var vests = parseInt(response.result.total_vesting_shares.slice(0,-6));
+        steemPowerratio = steem / vests;
+        return callback();
+    });
+};
 
 var autowithdraw = function(callback) {
     isNew((newBool) => {
@@ -544,9 +561,11 @@ var autowithdraw = function(callback) {
 var _autoWithdrawHelper = function(callback) {
     return importMinerPrivateKeys(() => {
         return setWithdrawVestingRoute(() => {
-            return listMyAccounts(() => {
-                return withdrawVesting(() => {
-                    return unsetWithdrawVestingRoute(callback);
+            return getRatio(() => {
+                return listMyAccounts(() => {
+                    return withdrawVesting(() => {
+                        return unsetWithdrawVestingRoute(callback);
+                    });
                 });
             });
         });
