@@ -258,7 +258,7 @@ var listMyAccounts = function(callback) {
         for (var i in response.result) {
             var curr = response.result[i];
             console.log(`   ${curr.name}:	${curr.balance}
-			              ${curr.vesting_shares*steemPowerRatio}
+			              ${parseInt(curr.vesting_shares)*steemPowerRatio}
 	                  ${curr.sbd_balance}\n`);
         }
         if (typeof callback === 'function') {
@@ -524,9 +524,12 @@ var getRatio = function(callback) {
             console.log("An error with info has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        var steem = response.result.total_vesting_fund_steem;
-        var vests = response.result.total_vesting_shares;
-        steemPowerratio = steem / vests;
+        var steem = parseInt(response.result.total_vesting_fund_steem);
+        var vests = parseInt(response.result.total_vesting_shares);
+	console.log(steem);
+	console.log(vests);
+        steemPowerRatio = (steem / vests);
+	console.log(steemPowerRatio);
         return callback();
     });
 };
