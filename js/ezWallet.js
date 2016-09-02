@@ -518,18 +518,17 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     });
 };
 
+//Calls info in cli_wallet and uses info to find conversion Ratio for Vests -> STEEM
 var getRatio = function(callback) {
     client.request('info', [], rpcIDs.infoID, function(err, response) {
         if (err) {
             console.log("An error with info has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        var steem = parseInt(response.result.total_vesting_fund_steem);
-        var vests = parseInt(response.result.total_vesting_shares);
-	console.log(steem);
-	console.log(vests);
-        steemPowerRatio = (steem / vests);
-	console.log(steemPowerRatio);
+        //cut off non-number text and convert to numbers
+        var steem = parseInt(response.result.total_vesting_fund_steem.slice(0,-6));
+        var vests = parseInt(response.result.total_vesting_shares.slice(0,-6));
+        steemPowerratio = steem / vests;
         return callback();
     });
 };
