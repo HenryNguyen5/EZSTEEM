@@ -258,7 +258,7 @@ var listMyAccounts = function(callback) {
         for (var i in response.result) {
             var curr = response.result[i];
             console.log(`   ${curr.name}:	${curr.balance}
-			              ${curr.vesting_shares*steemPowerRatio}
+			              ${helper.convertVests(curr.vesting_shares,steemPowerRatio)}
 	                  ${curr.sbd_balance}\n`);
         }
         if (typeof callback === 'function') {
@@ -518,14 +518,16 @@ var modifyMinerandWitnesses = function(err, rawContents, callback) {
     });
 };
 
+//Calls info in cli_wallet and uses info to find conversion Ratio for Vests -> STEEM
 var getRatio = function(callback) {
     client.request('info', [], rpcIDs.infoID, function(err, response) {
         if (err) {
             console.log("An error with info has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        var steem = response.result.total_vesting_fund_steem;
-        var vests = response.result.total_vesting_shares;
+        //cut off non-number text and convert to numbers
+        var steem = parseInt(response.result.total_vesting_fund_steem.slice(0,-6));
+        var vests = parseInt(response.result.total_vesting_shares.slice(0,-6));
         steemPowerratio = steem / vests;
         return callback();
     });

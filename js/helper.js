@@ -28,6 +28,15 @@ var asyncLoop = function(iterations, func, callback) {
     return loop;
 };
 
+//Takes current miner's VESTS and the VESTS -> STEEM ratio and outputs a clean string
+var convertVests = function(vests, ratio) {
+    //slice " VESTS" for conversion to number
+    vests = parseInt(vests.slice(0,-6));
+    //convert back to a string, append the unit type and return
+    return toString(vests*ratio) + " STEEM";
+};
+
 module.exports = {
     asyncLoop: asyncLoop,
+    convertVests: convertVests
 };
