@@ -14,7 +14,9 @@ fi
 #set the Base Directory to be the directory that EZSTEEM.sh is being run from
 myNewBaseDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-
+#Auto update script on run
+sudo -s git pull
+clear
 
 #check if the default path is set
 if [ -z ${myBaseDir+x} ];
@@ -73,6 +75,8 @@ $e "$pnk 4) $wht Recompile your Steem miner or Steem Node with the latest versio
 $e "$pnk 5) $wht Redownload a blockchain and bootstrap your Steem Miner or Steem Node"
 $e "$pnk 6) $wht Start mining or start your node!"
 $e "$pnk 7) $wht Set EZSTEEM to automatically run when user logs in."
+$e "$pnk 8) $wht Start cli_wallet, start this before transferring Steem Power!"
+$e "$pnk 9) $wht Transfer your mined Steem Power or modify/add your miners"
 $e "$pnk 0) $wht Exit"
 
 echo
@@ -81,7 +85,7 @@ choice=""
 while true 
 do
   read -p "Enter your choice here: " choice
-  echo $choice | grep -q "^[0-7]"
+  echo $choice | grep -q "^[0-9]"
   if [ $? -eq 0 ] 
    then
    break
@@ -111,6 +115,13 @@ case $choice in
   ;;
   7) echo "Enabling EZSTEEM AutoRun"
     sudo -s bash $myBaseDir/bin/setautorun.sh
+  ;;
+  8) echo "Starting cli_wallet"
+     cd $myBaseDir/steem/programs/cli_wallet && sudo -s ./cli_wallet -r -d 
+  ;;
+  9) echo "Starting ezWallet.js"
+     clear
+     sudo -s nodejs $myBaseDir/js/ezWalletMenu.js
   ;;
   0) echo "Exiting..."
      exit 0 
