@@ -216,8 +216,8 @@ var withdrawVesting = function(callback) {
     helper.asyncLoop(minerAccountArray.length, function(loop) {
             var schema = {
                 properties: {
-                    VESTS: {
-                        description: `How many VESTS would you like to powerdown from ${minerAccountArray[loop.iteration()]}?\n`,
+                    SP: {
+                        description: `How much STEEM POWER would you like to powerdown from ${minerAccountArray[loop.iteration()]}?\n`,
                         type: 'string',
                         required: true
                     }
@@ -225,8 +225,9 @@ var withdrawVesting = function(callback) {
             };
 
             prompt.get(schema, function(err, response) {
-                response.VESTS = response.VESTS + ".000000 VESTS";
-                client.request('withdraw_vesting', [minerAccountArray[loop.iteration()], response.VESTS, true], rpcIDs.withdrawVestingID + loop.index, function(err, response) {
+				//convert from SP to VESTS for cli_wallet, then append VESTS to make it "asset" type
+                response.SP = (response.SP/steemPowerRatio).toFixed(6) + " VESTS";
+                client.request('withdraw_vesting', [minerAccountArray[loop.iteration()], response.SP, true], rpcIDs.withdrawVestingID + loop.index, function(err, response) {
                     if (err) {
                         console.log('An error with withdrawVesting has occured');
                         throw err;
@@ -258,8 +259,8 @@ var listMyAccounts = function(callback) {
         for (var i in response.result) {
             var curr = response.result[i];
             console.log(`   ${curr.name}:	${curr.balance}
-			              ${parseInt(curr.vesting_shares)*steemPowerRatio}
-	                  ${curr.sbd_balance}\n`);
+		${(parseInt(curr.vesting_shares)*steemPowerRatio).toFixed(3)} STEEM POWER
+		${curr.sbd_balance}\n`);
         }
         if (typeof callback === 'function') {
             callback();
@@ -525,7 +526,6 @@ var getRatio = function(callback) {
             console.log("An error with info has occured: SHOULD NOT HAPPEN");
             throw err;
         }
-        //cut off non-number text and convert to numbers
         var steem = parseInt(response.result.total_vesting_fund_steem);
         var vests = parseInt(response.result.total_vesting_shares);
         steemPowerRatio = steem / vests;
