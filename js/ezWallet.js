@@ -526,9 +526,9 @@ var getRatio = function(callback) {
             throw err;
         }
         //cut off non-number text and convert to numbers
-        var steem = parseInt(response.result.total_vesting_fund_steem.slice(0,-6));
-        var vests = parseInt(response.result.total_vesting_shares.slice(0,-6));
-        steemPowerratio = steem / vests;
+        var steem = parseInt(response.result.total_vesting_fund_steem);
+        var vests = parseInt(response.result.total_vesting_shares);
+        steemPowerRatio = steem / vests;
         return callback();
     });
 };
