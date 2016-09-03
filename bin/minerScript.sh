@@ -69,6 +69,7 @@ fi
 
 cd "$myBaseDir"
 sudo -s  apt-get -y install openssh-server 
+sudo -s apt-get -y install nodejs
 sudo -s apt-get update 
 sudo -s apt-get -y upgrade 
 sudo -s apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf 
@@ -263,6 +264,8 @@ do
 done
 sudo -s sed -i "s/# miner =/&\n$str/" "$myConfigFile"
 
+#comment out account_history by default
+sudo -s sed -i 's/account_history/#account_history/' "$myConfigFile"
 
 #Replace "# mining-threads"
 #with contents of $mining_threads

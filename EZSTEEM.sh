@@ -77,6 +77,7 @@ $e "$pnk 6) $wht Start mining or start your node!"
 $e "$pnk 7) $wht Set EZSTEEM to automatically run when user logs in."
 $e "$pnk 8) $wht Start cli_wallet, start this before transferring Steem Power!"
 $e "$pnk 9) $wht Transfer your mined Steem Power or modify/add your miners"
+$e "$pnk 10) $wht Setup a screen split via Byobu"
 $e "$pnk 0) $wht Exit"
 
 echo
@@ -122,6 +123,10 @@ case $choice in
   9) echo "Starting ezWallet.js"
      clear
      sudo -s nodejs $myBaseDir/js/ezWalletMenu.js
+  ;;
+  10) echo "Setting up screen split"
+     clear
+     bash $myBaseDir/bin/byobuSetup.sh
   ;;
   0) echo "Exiting..."
      exit 0 

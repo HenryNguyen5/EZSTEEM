@@ -75,6 +75,7 @@ fi
 
 cd "$myBaseDir"
 sudo -s apt-get -y install openssh-server 
+sudo -s apt-get -y install nodejs
 sudo -s apt-get update 
 sudo -s apt-get -y upgrade 
 sudo -s apt-get -y install unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf 
@@ -130,6 +131,9 @@ str+="seed-node = 81.89.101.133:2001\n"
 str+="seed-node = 46.252.27.1:1337\n"
 
 sed -i "s/# seed-node =/&\n$str/" config.ini
+
+#comment out account_history by default
+sed -i 's/account_history/#account_history/' config.ini
 
 #Replace "# rpc-endpoint = "
 #with    "rpc-endpoint = 127.0.0.1:8090"
