@@ -71,7 +71,7 @@ cd "$myBaseDir"
 sudo -s  apt-get -y install openssh-server 
 sudo -s apt-get update 
 sudo -s apt-get -y upgrade 
-sudo -s apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen byobu
+sudo -s apt-get -y install zip unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf 
 sudo -s git clone https://github.com/steemit/steem 
 sudo -s chown -R $USER $myBaseDir
 cd steem 
@@ -196,11 +196,6 @@ sleep 3
 kill $PID
 sleep 1
 
-echo
-$pnk1 "Setting up byobu..."
-
-#copy our pre-modified files in
-sudo -s cp -r  $myBaseDir/byobuConf/.byobu ~
 
 echo
 $pnkl "Modifying your $myConfigFile file"

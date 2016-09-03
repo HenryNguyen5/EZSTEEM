@@ -77,7 +77,7 @@ cd "$myBaseDir"
 sudo -s apt-get -y install openssh-server 
 sudo -s apt-get update 
 sudo -s apt-get -y upgrade 
-sudo -s apt-get -y install unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf screen  byobu
+sudo -s apt-get -y install unzip cmake g++ python-dev autotools-dev libicu-dev build-essential libbz2-dev libboost-all-dev libssl-dev libncurses5-dev doxygen libreadline-dev dh-autoreconf 
 sudo -s git clone https://github.com/steemit/steem 
 cd steem 
 sudo -s git checkout v0.13.0
@@ -99,8 +99,6 @@ kill $PID
 sleep 1
 clear
 
-$e "$pnk Setting up byobu..."
-sudo -s cp -r  $myBaseDir/byobuConf/.byobu ~
 
 $e "$pnk Modifying your $myBaseDir/steem/programs/steemd/witness_node_data_dir/config.ini file $wht"
 cd  "$myBaseDir/steem/programs/steemd/witness_node_data_dir/"
